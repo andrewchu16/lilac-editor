@@ -1,0 +1,4 @@
+not isMaximized
+984 765
+266 45
+0
