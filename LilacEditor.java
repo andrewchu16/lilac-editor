@@ -7,12 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -21,23 +16,31 @@ public class LilacEditor {
     private Settings settings;
     private ToolBar toolBar;
     private TabManager tabManager;
+    private EditorMenuBar menuBar;
 
     public LilacEditor() {
+        this.setupWindow();
+        this.loadSettings();
+        this.setupMenuBar();
+    }
+
+    private void setupWindow() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                | UnsupportedLookAndFeelException exception) {
-            exception.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (InstantiationException ex) {
+            ex.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (UnsupportedLookAndFeelException ex) {
+            ex.printStackTrace();
         }
 
         this.frame = new JFrame(Const.TITLE_NAME);
-
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.setResizable(true);
         this.frame.setLayout(new BorderLayout());
-
-        this.loadSettings();
-        this.frame.setJMenuBar(this.createMenuBar());
     }
 
     private void loadSettings() {
@@ -48,7 +51,7 @@ public class LilacEditor {
             this.settings.setWindowDimension(Const.DEFAULT_DIMENSION);
             this.settings.setIsMaximized(Const.DEFAULT_IS_MAXIMIZED);
         }
-        
+
         this.frame.setLocation(this.settings.getWindowLocation());
         this.frame.getContentPane().setPreferredSize(this.settings.getWindowDimension());
 
@@ -84,51 +87,34 @@ public class LilacEditor {
         });
     }
 
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
+    private void setupMenuBar() {
+        this.menuBar = new EditorMenuBar();
+        this.frame.setJMenuBar(menuBar);
 
-        menuBar.add(this.createFileMenu());
-        menuBar.add(this.createEditMenu());
-        menuBar.add(this.createViewMenu());
-
-        return menuBar;
-    }
-
-    private JMenu createFileMenu() {
-        JMenu fileMenu = new JMenu("File");
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-
-        // Populate the file menu.
-        JMenuItem newFileMenuItem = new JMenuItem("New File");
-        newFileMenuItem.setAccelerator(KeyStroke.getKeyStroke("control N"));
-        newFileMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("File", "New File", "ctrl N", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("New file");
             }
         });
-        
-        JMenuItem openFileMenuItem = new JMenuItem("Open");
-        openFileMenuItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
-        openFileMenuItem.addActionListener(new ActionListener() {
+
+        this.menuBar.addMenuItem("File", "Open", "ctrl O", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Open file");
             }
         });
 
-        JMenuItem closeFileMenuItem = new JMenuItem("Close");
-        closeFileMenuItem.setAccelerator(KeyStroke.getKeyStroke("control W"));
-        closeFileMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("File", "Close", "ctrl W", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Close file");
             }
         });
 
-        JMenuItem saveFileMenuItem = new JMenuItem("Save");
-        saveFileMenuItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
-        saveFileMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addSeparator("File");
+
+        this.menuBar.addMenuItem("File", "Save", "ctrl S", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 Canvas canvas = tabManager.getSelectedCanvas();
@@ -136,142 +122,92 @@ public class LilacEditor {
             }
         });
 
-        JMenuItem saveAsMenuItem = new JMenuItem("Save As");
-        saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke("control shift S"));
-        saveAsMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("File", "Save As", "ctrl shift S", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("Save as");
+                System.out.println("Save As");
             }
         });
 
-        JMenuItem exportFileMenuItem = new JMenuItem("Export");
-        exportFileMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("File", "Export", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Export file");
             }
         });
 
-        JMenuItem exitMenuItem = new JMenuItem("Exit");
-        exitMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addSeparator("File");
+
+        this.menuBar.addMenuItem("File", "Exit", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
             }
         });
 
-        fileMenu.add(newFileMenuItem);
-        fileMenu.add(openFileMenuItem);
-        fileMenu.add(closeFileMenuItem);
-        fileMenu.addSeparator();
-        fileMenu.add(saveFileMenuItem);
-        fileMenu.add(saveAsMenuItem);
-        fileMenu.add(exportFileMenuItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitMenuItem);
-
-        return fileMenu;
-    }
-    
-    private JMenu createEditMenu() {
-        JMenu editMenu = new JMenu("Edit");
-        editMenu.setMnemonic(KeyEvent.VK_E);
-
-        // Populate the edit menu.
-        JMenuItem undoMenuItem = new JMenuItem("Undo");
-        undoMenuItem.setAccelerator(KeyStroke.getKeyStroke("control Z"));
-        undoMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("Edit", "Undo", "ctrl Z", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Undo");
             }
         });
 
-        JMenuItem redoMenuItem = new JMenuItem("Redo");
-        redoMenuItem.setAccelerator(KeyStroke.getKeyStroke("control Y"));
-        redoMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("Edit", "Redo", "ctrl Y", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Redo");
             }
         });
 
-        JMenuItem deleteMenuItem = new JMenuItem("Delete");
-        deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke("DELETE"));
-        deleteMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addSeparator("Edit");
+
+        this.menuBar.addMenuItem("Edit", "Delete", "DELETE", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Delete");
             }
         });
 
-        JMenuItem duplicateMenuItem = new JMenuItem("Duplicate");
-        duplicateMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("Edit", "Duplicate", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Duplicate");
             }
         });
 
+        this.menuBar.addSeparator("Edit");
 
-        JMenuItem copyMenuItem = new JMenuItem("Copy");
-        copyMenuItem.setAccelerator(KeyStroke.getKeyStroke("control C"));
-        copyMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("Edit", "Copy", "ctrl C", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Copy");
             }
         });
 
-        JMenuItem pasteMenuItem = new JMenuItem("Paste");
-        pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
-        pasteMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("Edit", "Paste", "ctrl V", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Paste");
             }
         });
 
-        editMenu.add(undoMenuItem);
-        editMenu.add(redoMenuItem);
-        editMenu.addSeparator();
-        editMenu.add(deleteMenuItem);
-        editMenu.add(duplicateMenuItem);
-        editMenu.addSeparator();
-        editMenu.add(copyMenuItem);
-        editMenu.add(pasteMenuItem);
-
-        return editMenu;
-    }
-
-    private JMenu createViewMenu() {
-        JMenu viewMenu = new JMenu("View");
-        viewMenu.setMnemonic(KeyEvent.VK_V);
-
-        // Populate the view menu.
-        JMenuItem zoomInMenuItem = new JMenuItem("Zoom In");
-        zoomInMenuItem.setAccelerator(KeyStroke.getKeyStroke("control EQUALS"));
-        zoomInMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("View", "Zoom In", "ctrl EQUALS", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Zoom In");
             }
         });
 
-        JMenuItem zoomOutMenuItem = new JMenuItem("Zoom Out");
-        zoomOutMenuItem.setAccelerator(KeyStroke.getKeyStroke("control MINUS"));
-        zoomOutMenuItem.addActionListener(new ActionListener() {
+        this.menuBar.addMenuItem("View", "Zoom Out", "ctrl MINUS", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println("Zoom Out");
             }
         });
 
-        viewMenu.add(zoomInMenuItem);
-        viewMenu.add(zoomOutMenuItem);
-
-        return viewMenu;
+        this.menuBar.setMnemonic("File", KeyEvent.VK_F);
+        this.menuBar.setMnemonic("Edit", KeyEvent.VK_E);
+        this.menuBar.setMnemonic("View", KeyEvent.VK_V);
     }
 
     public void run() {
@@ -279,7 +215,7 @@ public class LilacEditor {
             this.frame.pack();
         }
         this.frame.setVisible(true);
-        this.frame.requestFocus();
+        this.frame.requestFocusInWindow();
     }
 
     public static void main(String[] args) {
