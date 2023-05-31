@@ -8,10 +8,12 @@ import javax.swing.KeyStroke;
 public class EditorMenuBar extends JMenuBar {
     public JMenuItem getMenuItem(String menuText, String menuItemText) {
         JMenu menu = this.getMenu(menuText);
-        for (int j = 0; j < menu.getItemCount(); j++) {
-            JMenuItem menuItem = menu.getItem(j);
-            if (menuItem.getText().equals(menuItemText)) {
-                return menuItem;
+        if (menu != null) {
+            for (int j = 0; j < menu.getItemCount(); j++) {
+                JMenuItem menuItem = menu.getItem(j);
+                if (menuItem.getText().equals(menuItemText)) {
+                    return menuItem;
+                }
             }
         }
 
@@ -20,6 +22,11 @@ public class EditorMenuBar extends JMenuBar {
 
     public JMenuItem addMenuItem(String menuText, String menuItemText, String keyStroke, ActionListener actionListener) {
         JMenu menu = this.getMenu(menuText);
+
+        if (menu == null) {
+            menu = new JMenu(menuText);
+            this.add(menu);
+        }
 
         JMenuItem menuItem = new JMenuItem(menuItemText);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(keyStroke));
@@ -32,6 +39,11 @@ public class EditorMenuBar extends JMenuBar {
     public JMenuItem addMenuItem(String menuText, String menuItemText, ActionListener actionListener) {
         JMenu menu = this.getMenu(menuText);
 
+        if (menu == null) {
+            menu = new JMenu(menuText);
+            this.add(menu);
+        }
+
         JMenuItem menuItem = new JMenuItem(menuItemText);
         menuItem.addActionListener(actionListener);
         menu.add(menuItem);
@@ -39,7 +51,7 @@ public class EditorMenuBar extends JMenuBar {
         return menuItem;
     }
 
-    private JMenu getMenu(String menuText) {
+    public JMenu getMenu(String menuText) {
         JMenu menu = null;
         for (int i = 0; i < this.getMenuCount() && menu == null; i++) {
             menu = this.getMenu(i);
@@ -48,17 +60,14 @@ public class EditorMenuBar extends JMenuBar {
             }
         }
 
-        if (menu == null) {
-            menu = new JMenu(menuText);
-            this.add(menu);
-        }
-
         return menu;
     }
 
     public void setMnemonic(String menuText, int mnemonic) {
         JMenu menu = this.getMenu(menuText);
-        menu.setMnemonic(mnemonic);
+        if (menu != null) {
+            menu.setMnemonic(mnemonic);
+        }
     }
 
     public void addSeparator(String menuText) {
