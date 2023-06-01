@@ -1,3 +1,4 @@
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -10,34 +11,35 @@ import java.awt.GridLayout;
 import java.awt.Label;
 
 public class ToolBar extends JToolBar {
-    private JPanel utilityButtons;
-    private JPanel toolButtons;
+    private JPanel utilityButtonsPanel;
+    private JPanel toolButtonsPanel;
     private ButtonGroup toolButtonGroup;
 
     public ToolBar(String name) {
         super(name);
         this.setFloatable(false);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
-        this.utilityButtons = new JPanel(new GridLayout(0, 2, 4, 4));
-        this.toolButtons = new JPanel(new GridLayout(0, 1));
+        this.utilityButtonsPanel = new JPanel(new GridLayout(0, 2, 4, 4));
+        this.toolButtonsPanel = new JPanel(new GridLayout(0, 1, 0, 4));
         this.toolButtonGroup = new ButtonGroup();
 
         this.add(new Label("Utilities", Label.CENTER));
-        this.add(utilityButtons);
-        this.add(Box.createRigidArea(new Dimension(160, 100)));
+        this.add(utilityButtonsPanel);
+        this.add(Box.createRigidArea(new Dimension(160, 80)));
         this.add(new Label("Tools", Label.CENTER));
-        this.add(toolButtons);
+        this.add(toolButtonsPanel);
         this.add(Box.createVerticalStrut(1000));
     }
 
     public void addUtilityButton(UtilityButton button) {
-        this.utilityButtons.add(button);
+        this.utilityButtonsPanel.add(button);
     }
 
     public void addToolButton(ToolButton button) {
         this.toolButtonGroup.add(button);
-        this.toolButtons.add(button);
+        this.toolButtonsPanel.add(button);
     }
 
     public String getTool() {
@@ -45,10 +47,10 @@ public class ToolBar extends JToolBar {
     }
 
     public void setTool(String tool) {
-        for (Component comp: this.toolButtons.getComponents()) {
+        for (Component comp: this.toolButtonsPanel.getComponents()) {
             if (comp instanceof ToolButton) {
                 ToolButton button = (ToolButton) comp;
-                
+
                 if (button.getActionCommand().equals(tool)) {
                     button.setSelected(true);
                     return;

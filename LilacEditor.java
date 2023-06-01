@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -22,10 +21,10 @@ public class LilacEditor {
 
     public LilacEditor() {
         this.setupWindow();
-        this.loadSettings();
         this.setupMenuBar();
         this.setupToolBar();
         this.setupTabManager();
+        this.loadSettings();
     }
 
     private void setupWindow() {
@@ -45,50 +44,6 @@ public class LilacEditor {
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.setResizable(true);
         this.frame.setLayout(new BorderLayout());
-    }
-
-    private void loadSettings() {
-        this.settings = new Settings(Const.SETTINGS_FILE_NAME);
-
-        if (!this.settings.load()) {
-            this.settings.setWindowLocation(Const.DEFAULT_LOCATION);
-            this.settings.setWindowDimension(Const.DEFAULT_DIMENSION);
-            this.settings.setIsMaximized(Const.DEFAULT_IS_MAXIMIZED);
-        }
-
-        this.frame.setLocation(this.settings.getWindowLocation());
-        this.frame.getContentPane().setPreferredSize(this.settings.getWindowDimension());
-
-        if (this.settings.getIsMaximized()) {
-            this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
-
-        this.frame.addComponentListener(new ComponentAdapter() {
-            public void componentMoved(ComponentEvent event) {
-                boolean isMaximized = (frame.getLocation().getX() < 0);
-                if (!isMaximized) {
-                    settings.setWindowLocation(frame.getLocation());
-                }
-            }
-
-            public void componentResized(ComponentEvent event) {
-                boolean isMaximized = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
-                if (!isMaximized) {
-                    if (settings.getIsMaximized()) {
-                        frame.pack();
-                    }
-                    settings.setWindowDimension(frame.getSize());
-                }
-
-                settings.setIsMaximized(isMaximized);
-            }
-        });
-
-        this.frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent event) {
-                settings.save();
-            }
-        });
     }
 
     private void setupMenuBar() {
@@ -218,7 +173,7 @@ public class LilacEditor {
         this.frame.add(this.toolBar, BorderLayout.WEST);
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/undo 64x64.png", Const.UNDO_COMMAND, new ActionListener() {
+            new UtilityButton(Const.UNDO_ICON_FILE_NAME, Const.UNDO_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     undo();
@@ -228,7 +183,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/redo 64x64.png", Const.REDO_COMMAND, new ActionListener() {
+            new UtilityButton(Const.REDO_ICON_FILE_NAME, Const.REDO_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     redo();
@@ -238,7 +193,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/save 64x64.png", Const.SAVE_FILE_COMMAND, new ActionListener() {
+            new UtilityButton(Const.SAVE_ICON_FILE_NAME, Const.SAVE_FILE_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     save();
@@ -248,7 +203,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/duplicate 64x64.png", Const.DUPLICATE_COMMAND, new ActionListener() {
+            new UtilityButton(Const.DUPLICATE_ICON_FILE_NAME, Const.DUPLICATE_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     duplicateSelected();
@@ -258,7 +213,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/zoom-in 64x64.png", Const.ZOOM_IN_COMMAND, new ActionListener() {
+            new UtilityButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.ZOOM_IN_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     zoomIn();
@@ -268,7 +223,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/zoom-out 64x64.png", Const.ZOOM_OUT_COMMAND, new ActionListener() {
+            new UtilityButton(Const.ZOOM_OUT_ICON_FILE_NAME, Const.ZOOM_OUT_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     zoomOut();
@@ -278,38 +233,91 @@ public class LilacEditor {
         );
 
         this.toolBar.addToolButton(
-            new ToolButton("", Const.SELECT_TOOL_TEXT)
+            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.SELECT_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton("", Const.CLASS_TOOL_TEXT)
+            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.CLASS_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton("", Const.INTERFACE_TOOL_TEXT)
+            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.INTERFACE_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton("", Const.INHERITS_TOOL_TEXT)
+            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.INHERITS_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton("", Const.IMPLEMENTS_TOOL_TEXT)
+            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.IMPLEMENTS_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton("", Const.AGGREGATE_TOOL_TEXT)
+            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.AGGREGATE_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton("", Const.COMPOSED_TOOL_TEXT)
+            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.COMPOSED_TOOL_TEXT)
         );
 
         this.toolBar.setTool(Const.SELECT_TOOL_TEXT);
     }
 
+    private void setupTabManager() {
+        this.tabManager = new TabManager(this.toolBar);
+
+        this.tabManager.add(new Label("HELLO"));
+        this.tabManager.add(new Label("HI"));
+        this.frame.add(this.tabManager,  BorderLayout.CENTER);
+    }
+
+    private void loadSettings() {
+        this.settings = new Settings(Const.SETTINGS_FILE_NAME);
+
+        if (!this.settings.load()) {
+            this.settings.setWindowLocation(Const.DEFAULT_LOCATION);
+            this.settings.setWindowDimension(Const.DEFAULT_DIMENSION);
+            this.settings.setIsMaximized(Const.DEFAULT_IS_MAXIMIZED);
+        }
+
+        this.frame.setLocation(this.settings.getWindowLocation());
+        this.frame.getContentPane().setPreferredSize(this.settings.getWindowDimension());
+
+        if (this.settings.getIsMaximized()) {
+            this.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+
+        this.frame.addComponentListener(new ComponentAdapter() {
+            public void componentMoved(ComponentEvent event) {
+                boolean isMaximized = (frame.getLocation().getX() < 0);
+                if (!isMaximized) {
+                    settings.setWindowLocation(frame.getLocation());
+                }
+            }
+
+            public void componentResized(ComponentEvent event) {
+                boolean isMaximized = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+                if (!isMaximized) {
+                    if (settings.getIsMaximized()) {
+                        frame.pack();
+                    }
+                    settings.setWindowDimension(frame.getSize());
+                }
+
+                settings.setIsMaximized(isMaximized);
+            }
+        });
+
+        this.frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent event) {
+                settings.save();
+            }
+        });
+    }
+
     public boolean undo() {
         System.out.println(Const.UNDO_COMMAND);
+        System.out.println(this.toolBar.getTool());
         return true;
     }
 
@@ -332,14 +340,6 @@ public class LilacEditor {
 
     public void zoomOut() {
         System.out.println(Const.ZOOM_OUT_COMMAND);
-    }
-
-    private void setupTabManager() {
-        this.tabManager = new TabManager();
-
-        this.tabManager.add(new Label("HELLO"));
-        this.tabManager.add(new Label("HI"));
-        this.frame.add(this.tabManager,  BorderLayout.CENTER);
     }
 
     public void run() {

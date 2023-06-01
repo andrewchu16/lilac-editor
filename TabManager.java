@@ -3,8 +3,11 @@ import java.awt.Component;
 import javax.swing.JTabbedPane;
 
 public class TabManager extends JTabbedPane {
-    public TabManager() {
+    private ToolBar toolBar;
+
+    public TabManager(ToolBar toolBar) {
         super();
+        this.toolBar = toolBar;
     }
 
     public Canvas getSelectedCanvas() {
@@ -15,5 +18,9 @@ public class TabManager extends JTabbedPane {
         }
 
         return null;
+    }
+
+    public void addCanvas(Canvas canvas) {
+        this.add(canvas);
     }
 }

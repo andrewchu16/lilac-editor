@@ -62,6 +62,12 @@ public final class Const {
     public static final String COMPOSED_TOOL_TEXT = "Composed of";
 
     // Utility Button Icons
+    public static final String UNDO_ICON_FILE_NAME = "./assets/undo 64x64.png";
+    public static final String REDO_ICON_FILE_NAME = "./assets/redo 64x64.png";
+    public static final String SAVE_ICON_FILE_NAME = "./assets/save 64x64.png";
+    public static final String DUPLICATE_ICON_FILE_NAME = "./assets/duplicate 64x64.png";
+    public static final String ZOOM_IN_ICON_FILE_NAME = "./assets/zoom-in 64x64.png";
+    public static final String ZOOM_OUT_ICON_FILE_NAME = "./assets/zoom-out 64x64.png";
 
     // Tool Button Icons
 }

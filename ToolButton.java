@@ -1,11 +1,31 @@
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class ToolButton extends JButton {
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JRadioButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+public class ToolButton extends JRadioButton {
+
     public ToolButton(String imageFileName, String toolText) {
-        super(new ImageIcon(imageFileName, toolText));
+        super(new ImageIcon(imageFileName));
         this.setText(toolText);
         this.setToolTipText(toolText);
         this.setActionCommand(toolText);
+        this.setBackground(Color.WHITE);
+
+        this.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent event) {
+                if (isSelected()) {
+                    setBackground(Color.CYAN);
+                } else {
+                    setBackground(Color.WHITE);
+                }
+            }
+        });
     }
 }
