@@ -70,4 +70,11 @@ public final class Const {
     public static final String ZOOM_OUT_ICON_FILE_NAME = "./assets/zoom-out 64x64.png";
 
     // Tool Button Icons
+    public static final String SELECT_ICON_FILE_NAME = "./assets/undo 64x64.png";
+    public static final String CLASS_ICON_FILE_NAME = "./assets/undo 64x64.png";
+    public static final String INTERFACE_ICON_FILE_NAME = "./assets/undo 64x64.png";
+    public static final String INHERITS_ICON_FILE_NAME = "./assets/undo 64x64.png";
+    public static final String IMPLEMENTS_ICON_FILE_NAME = "./assets/undo 64x64.png";
+    public static final String AGGREGATE_ICON_FILE_NAME = "./assets/undo 64x64.png";
+    public static final String COMPOSED_ICON_FILE_NAME = "./assets/undo 64x64.png";
 }

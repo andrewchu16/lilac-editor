@@ -233,31 +233,31 @@ public class LilacEditor {
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.SELECT_TOOL_TEXT)
+            new ToolButton(Const.SELECT_ICON_FILE_NAME, Const.SELECT_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.CLASS_TOOL_TEXT)
+            new ToolButton(Const.CLASS_ICON_FILE_NAME, Const.CLASS_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.INTERFACE_TOOL_TEXT)
+            new ToolButton(Const.INTERFACE_ICON_FILE_NAME, Const.INTERFACE_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.INHERITS_TOOL_TEXT)
+            new ToolButton(Const.INHERITS_ICON_FILE_NAME, Const.INHERITS_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.IMPLEMENTS_TOOL_TEXT)
+            new ToolButton(Const.IMPLEMENTS_ICON_FILE_NAME, Const.IMPLEMENTS_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.AGGREGATE_TOOL_TEXT)
+            new ToolButton(Const.AGGREGATE_ICON_FILE_NAME, Const.AGGREGATE_TOOL_TEXT)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.COMPOSED_TOOL_TEXT)
+            new ToolButton(Const.COMPOSED_ICON_FILE_NAME, Const.COMPOSED_TOOL_TEXT)
         );
 
         this.toolBar.setTool(Const.SELECT_TOOL_TEXT);
@@ -346,6 +346,7 @@ public class LilacEditor {
         if (!this.settings.getIsMaximized()) {
             this.frame.pack();
         }
+
         this.frame.setVisible(true);
         this.frame.requestFocusInWindow();
     }

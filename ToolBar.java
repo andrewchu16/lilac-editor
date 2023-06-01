@@ -3,6 +3,8 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 import java.awt.Component;
@@ -27,10 +29,9 @@ public class ToolBar extends JToolBar {
 
         this.add(new Label("Utilities", Label.CENTER));
         this.add(utilityButtonsPanel);
-        this.add(Box.createRigidArea(new Dimension(160, 80)));
+        this.add(Box.createRigidArea(new Dimension(200,10)));
         this.add(new Label("Tools", Label.CENTER));
-        this.add(toolButtonsPanel);
-        this.add(Box.createVerticalStrut(1000));
+        this.add(new JScrollPane(toolButtonsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
     }
 
     public void addUtilityButton(UtilityButton button) {
