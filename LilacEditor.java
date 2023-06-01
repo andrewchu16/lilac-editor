@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -94,123 +95,122 @@ public class LilacEditor {
         this.menuBar = new EditorMenuBar();
         this.frame.setJMenuBar(menuBar);
 
-        this.menuBar.addMenuItem("File", "New File", "ctrl N", new ActionListener() {
+        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.NEW_FILE_COMMAND, Const.NEW_FILE_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("New file");
+                System.out.println(Const.NEW_FILE_COMMAND);
             }
         });
 
-        this.menuBar.addMenuItem("File", "Open", "ctrl O", new ActionListener() {
+        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.OPEN_FILE_COMMAND, Const.OPEN_FILE_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("Open file");
+                System.out.println(Const.OPEN_FILE_COMMAND);
             }
         });
 
-        this.menuBar.addMenuItem("File", "Close", "ctrl W", new ActionListener() {
+        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.CLOSE_FILE_COMMAND, Const.CLOSE_FILE_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("Close file");
+                System.out.println(Const.CLOSE_FILE_COMMAND);
             }
         });
 
-        this.menuBar.addSeparator("File");
+        this.menuBar.addSeparator(Const.FILE_MENU_TEXT);
 
-        this.menuBar.addMenuItem("File", "Save", "ctrl S", new ActionListener() {
+        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.SAVE_FILE_COMMAND, Const.SAVE_FILE_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                Canvas canvas = tabManager.getSelectedCanvas();
-                canvas.save();
+                save();
             }
         });
 
-        this.menuBar.addMenuItem("File", "Save As", "ctrl shift S", new ActionListener() {
+        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.SAVE_AS_COMMAND, Const.SAVE_AS_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("Save As");
+                System.out.println(Const.SAVE_AS_COMMAND);
             }
         });
 
-        this.menuBar.addMenuItem("File", "Export", new ActionListener() {
+        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.EXPORT_COMMAND, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("Export file");
+                System.out.println(Const.EXPORT_COMMAND);
             }
         });
 
-        this.menuBar.addSeparator("File");
+        this.menuBar.addSeparator(Const.FILE_MENU_TEXT);
 
-        this.menuBar.addMenuItem("File", "Exit", new ActionListener() {
+        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.EXIT_COMMAND, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
             }
         });
 
-        this.menuBar.addMenuItem("Edit", "Undo", "ctrl Z", new ActionListener() {
+        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.UNDO_COMMAND, Const.UNDO_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 undo();
             }
         });
 
-        this.menuBar.addMenuItem("Edit", "Redo", "ctrl Y", new ActionListener() {
+        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.REDO_COMMAND, Const.REDO_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 redo();
             }
         });
 
-        this.menuBar.addSeparator("Edit");
+        this.menuBar.addSeparator(Const.EDIT_MENU_TEXT);
 
-        this.menuBar.addMenuItem("Edit", "Delete", "DELETE", new ActionListener() {
+        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.DELETE_COMMAND, Const.DELETE_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("Delete");
+                System.out.println(Const.DELETE_COMMAND);
             }
         });
 
-        this.menuBar.addMenuItem("Edit", "Duplicate", new ActionListener() {
+        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.DUPLICATE_COMMAND, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 duplicateSelected();
             }
         });
 
-        this.menuBar.addSeparator("Edit");
+        this.menuBar.addSeparator(Const.EDIT_MENU_TEXT);
 
-        this.menuBar.addMenuItem("Edit", "Copy", "ctrl C", new ActionListener() {
+        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.COPY_COMMAND, Const.COPY_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("Copy");
+                System.out.println(Const.COPY_COMMAND);
             }
         });
 
-        this.menuBar.addMenuItem("Edit", "Paste", "ctrl V", new ActionListener() {
+        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.PASTE_COMMAND, Const.PASTE_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println("Paste");
+                System.out.println(Const.PASTE_COMMAND);
             }
         });
 
-        this.menuBar.addMenuItem("View", "Zoom In", "ctrl EQUALS", new ActionListener() {
+        this.menuBar.addMenuItem(Const.VIEW_MENU_TEXT, Const.ZOOM_IN_COMMAND, Const.ZOOM_IN_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 zoomIn();
             }
         });
 
-        this.menuBar.addMenuItem("View", "Zoom Out", "ctrl MINUS", new ActionListener() {
+        this.menuBar.addMenuItem(Const.VIEW_MENU_TEXT, Const.ZOOM_OUT_COMMAND, Const.ZOOM_IN_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 zoomOut();
             }
         });
 
-        this.menuBar.setMnemonic("File", KeyEvent.VK_F);
-        this.menuBar.setMnemonic("Edit", KeyEvent.VK_E);
-        this.menuBar.setMnemonic("View", KeyEvent.VK_V);
+        this.menuBar.setMnemonic(Const.FILE_MENU_TEXT, Const.FILE_MENU_MNEMONIC);
+        this.menuBar.setMnemonic(Const.EDIT_MENU_TEXT, Const.EDIT_MENU_MNEMONIC);
+        this.menuBar.setMnemonic(Const.VIEW_MENU_TEXT, Const.VIEW_MENU_MNEMONIC);
     }
 
     private void setupToolBar() {
@@ -218,7 +218,7 @@ public class LilacEditor {
         this.frame.add(this.toolBar, BorderLayout.WEST);
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/undo 64x64.png", "Undo", "undo", new ActionListener() {
+            new UtilityButton("./assets/undo 64x64.png", Const.UNDO_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     undo();
@@ -228,7 +228,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/redo 64x64.png", "Redo", "redo", new ActionListener() {
+            new UtilityButton("./assets/redo 64x64.png", Const.REDO_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     redo();
@@ -238,7 +238,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/save 64x64.png", "Save", "save", new ActionListener() {
+            new UtilityButton("./assets/save 64x64.png", Const.SAVE_FILE_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     save();
@@ -248,7 +248,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/duplicate 64x64.png", "Duplicate", "duplicate", new ActionListener() {
+            new UtilityButton("./assets/duplicate 64x64.png", Const.DUPLICATE_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     duplicateSelected();
@@ -258,7 +258,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/zoom-in 64x64.png", "Zoom In", "zoom in", new ActionListener() {
+            new UtilityButton("./assets/zoom-in 64x64.png", Const.ZOOM_IN_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     zoomIn();
@@ -268,7 +268,7 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton("./assets/zoom-out 64x64.png", "Zoom Out", "zoom out", new ActionListener() {
+            new UtilityButton("./assets/zoom-out 64x64.png", Const.ZOOM_OUT_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     zoomOut();
@@ -276,32 +276,62 @@ public class LilacEditor {
                 
             })
         );
+
+        this.toolBar.addToolButton(
+            new ToolButton("", Const.SELECT_TOOL_TEXT)
+        );
+
+        this.toolBar.addToolButton(
+            new ToolButton("", Const.CLASS_TOOL_TEXT)
+        );
+
+        this.toolBar.addToolButton(
+            new ToolButton("", Const.INTERFACE_TOOL_TEXT)
+        );
+
+        this.toolBar.addToolButton(
+            new ToolButton("", Const.INHERITS_TOOL_TEXT)
+        );
+
+        this.toolBar.addToolButton(
+            new ToolButton("", Const.IMPLEMENTS_TOOL_TEXT)
+        );
+
+        this.toolBar.addToolButton(
+            new ToolButton("", Const.AGGREGATE_TOOL_TEXT)
+        );
+
+        this.toolBar.addToolButton(
+            new ToolButton("", Const.COMPOSED_TOOL_TEXT)
+        );
+
+        this.toolBar.setTool(Const.SELECT_TOOL_TEXT);
     }
 
     public boolean undo() {
-        System.out.println("Undo");
+        System.out.println(Const.UNDO_COMMAND);
         return true;
     }
 
     public boolean redo() {
-        System.out.println("Redo");
+        System.out.println(Const.REDO_COMMAND);
         return false;
     }
 
     public void save() {
-        System.out.println("Save");
+        System.out.println(Const.SAVE_FILE_COMMAND);
     }
 
     public void duplicateSelected() {
-        System.out.println("Duplicate");
+        System.out.println(Const.DUPLICATE_COMMAND);
     }
 
     public void zoomIn() {
-        System.out.println("Zoom In");
+        System.out.println(Const.ZOOM_IN_COMMAND);
     }
 
     public void zoomOut() {
-        System.out.println("Zoom Out");
+        System.out.println(Const.ZOOM_OUT_COMMAND);
     }
 
     private void setupTabManager() {
