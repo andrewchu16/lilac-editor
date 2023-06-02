@@ -266,9 +266,8 @@ public class LilacEditor {
     private void setupTabManager() {
         this.tabManager = new TabManager(this.toolBar);
 
-        this.tabManager.add(new Label("HELLO"));
-        this.tabManager.add(new Label("HI"));
-        this.frame.add(this.tabManager,  BorderLayout.CENTER);
+        this.tabManager.addCanvas(new Canvas());
+        this.frame.add(this.tabManager, BorderLayout.CENTER);
     }
 
     private void loadSettings() {
@@ -299,7 +298,7 @@ public class LilacEditor {
                 boolean isMaximized = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
                 if (!isMaximized) {
                     if (settings.getIsMaximized()) {
-                        frame.pack();
+                        frame.setSize(settings.getWindowDimension());
                     }
                     settings.setWindowDimension(frame.getSize());
                 }
@@ -317,7 +316,7 @@ public class LilacEditor {
 
     public boolean undo() {
         System.out.println(Const.UNDO_COMMAND);
-        System.out.println(this.toolBar.getTool());
+        this.tabManager.addCanvas(new Canvas());
         return true;
     }
 

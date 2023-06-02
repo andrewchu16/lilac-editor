@@ -1,16 +1,16 @@
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Label;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class ToolBar extends JToolBar {
     private JPanel utilityButtonsPanel;
@@ -22,15 +22,16 @@ public class ToolBar extends JToolBar {
         this.setFloatable(false);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        
+        this.utilityButtonsPanel = new JPanel(new GridLayout(3, 2, 4, 4));
+        // this.utilityButtonsPanel.setMinimumSize(new Dimension(132, 136));
 
-        this.utilityButtonsPanel = new JPanel(new GridLayout(0, 2, 4, 4));
         this.toolButtonsPanel = new JPanel(new GridLayout(0, 1, 0, 4));
         this.toolButtonGroup = new ButtonGroup();
 
-        this.add(new Label("Utilities", Label.CENTER));
-        this.add(utilityButtonsPanel);
-        this.add(Box.createRigidArea(new Dimension(200,10)));
-        this.add(new Label("Tools", Label.CENTER));
+        this.add(new JLabel("Utilities", JLabel.CENTER));
+        this.add(new JScrollPane(utilityButtonsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+        this.add(new JLabel("Tools", JLabel.CENTER));
         this.add(new JScrollPane(toolButtonsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
     }
 
