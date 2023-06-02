@@ -48,6 +48,10 @@ public class Canvas extends JScrollPane {
 
     }
 
+    public boolean isSaved() {
+        return true;
+    }
+
     public boolean undo() {
         return true;
     }

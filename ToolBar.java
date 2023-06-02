@@ -7,10 +7,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class ToolBar extends JToolBar {
     private JPanel utilityButtonsPanel;
@@ -24,8 +21,6 @@ public class ToolBar extends JToolBar {
         this.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         
         this.utilityButtonsPanel = new JPanel(new GridLayout(3, 2, 4, 4));
-        // this.utilityButtonsPanel.setMinimumSize(new Dimension(132, 136));
-
         this.toolButtonsPanel = new JPanel(new GridLayout(0, 1, 0, 4));
         this.toolButtonGroup = new ButtonGroup();
 

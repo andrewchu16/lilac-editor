@@ -54,6 +54,7 @@ public class LilacEditor {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println(Const.NEW_FILE_COMMAND);
+                tabManager.addCanvas(new Canvas());
             }
         });
 
@@ -68,6 +69,7 @@ public class LilacEditor {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println(Const.CLOSE_FILE_COMMAND);
+                tabManager.remove(tabManager.getSelectedComponent());
             }
         });
 
@@ -316,7 +318,6 @@ public class LilacEditor {
 
     public boolean undo() {
         System.out.println(Const.UNDO_COMMAND);
-        this.tabManager.addCanvas(new Canvas());
         return true;
     }
 

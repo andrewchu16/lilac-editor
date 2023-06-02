@@ -83,8 +83,8 @@ public class CloseableTab extends JPanel {
                 g2.setColor(Color.RED);
             }
             int delta = 6;
-            g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
-            g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
+            g2.drawLine(delta, delta, getWidth() - delta, getHeight() - delta);
+            g2.drawLine(getWidth() - delta, delta, delta, getHeight() - delta);
         }
     }
 }
