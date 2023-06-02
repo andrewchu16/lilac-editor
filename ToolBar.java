@@ -24,10 +24,16 @@ public class ToolBar extends JToolBar {
         this.toolButtonsPanel = new JPanel(new GridLayout(0, 1, 0, 4));
         this.toolButtonGroup = new ButtonGroup();
 
+        JScrollPane utilityScrollPane = new JScrollPane(utilityButtonsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        utilityScrollPane.getVerticalScrollBar().setUnitIncrement(4);
+
+        JScrollPane toolScrollPane = new JScrollPane(toolButtonsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        toolScrollPane.getVerticalScrollBar().setUnitIncrement(4);
+
         this.add(new JLabel("Utilities", JLabel.CENTER));
-        this.add(new JScrollPane(utilityButtonsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+        this.add(utilityScrollPane);
         this.add(new JLabel("Tools", JLabel.CENTER));
-        this.add(new JScrollPane(toolButtonsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+        this.add(toolScrollPane);
     }
 
     public void addUtilityButton(UtilityButton button) {
