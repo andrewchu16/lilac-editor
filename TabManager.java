@@ -1,4 +1,6 @@
 import java.awt.Component;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JTabbedPane;
 
@@ -24,11 +26,11 @@ public class TabManager extends JTabbedPane {
         if (this.indexOfTab(canvas.getTitle()) == -1) {
             this.add(canvas.getTitle(), canvas);
         } else {
-            int index = 1;
-            while (this.indexOfTab(canvas.getTitle() + " (" + index + ")") != -1) {
-                index++;
+            int duplicateCount = 1;
+            while (this.indexOfTab(canvas.getTitle() + " (" + duplicateCount + ")") != -1) {
+                duplicateCount++;
             }
-            this.add(canvas.getTitle() + " (" + index + ")", canvas);
+            this.add(canvas.getTitle() + " (" + duplicateCount + ")", canvas);
         }
         this.setTabComponentAt(this.getTabCount() - 1, new CloseableTab(this, canvas));
     }
@@ -39,9 +41,16 @@ public class TabManager extends JTabbedPane {
         String tabName = ((CloseableTab) this.getTabComponentAt(index)).getName();
         super.remove(index);
 
-        String duplicateNameRegex = "\\(\\d+\\)$";
-        if (!canvas.getTitle().matches(duplicateNameRegex) && tabName.matches(duplicateNameRegex)) {
-            
+        Pattern duplicateNamePattern = Pattern.compile("\\((\\d+)\\)$");
+        Matcher matcher = duplicateNamePattern.matcher(tabName);
+        if (!duplicateNamePattern.matcher(canvas.getTitle()).find() && matcher.find()) {
+            int duplicateCount = Integer.parseInt(matcher.group(1)) + 1;
+            int tabIndex;
+
+            while ((tabIndex = this.indexOfTab(canvas.getTitle() + " (" + duplicateCount + ")")) != -1) {
+                this.setTitleAt(tabIndex, canvas.getTitle() + " (" + (duplicateCount - 1) + ")");
+                duplicateCount++;
+            }
         }
     }
 }
