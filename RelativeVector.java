@@ -7,7 +7,6 @@ public class RelativeVector extends Vector {
         this.relative = new Vector();
     }
 
-
     public RelativeVector(double x, double y) {
         this.base = new Vector();
         this.relative = new Vector(x, y);
@@ -16,6 +15,36 @@ public class RelativeVector extends Vector {
     public RelativeVector(Vector base, Vector relative) {
         this.base = base;
         this.relative = relative;
+    }
+
+    @Override
+    public double getX() {
+        return this.getBaseX() + this.getRelX();
+    }
+
+    @Override
+    public double getY() {
+        return this.getBaseY() + this.getRelY();
+    }
+
+    @Override
+    public void setX(double x) {
+        this.relative.setX(this.getRelX() + x - this.getX());
+    }
+
+    @Override
+    public void setY(double y) {
+        this.relative.setY(this.getRelY() + y - this.getY());
+    }
+
+    @Override
+    public void add(Vector vector) {
+        this.relative.add(vector);
+    }
+
+    @Override
+    public void scale(double scalar) {
+        this.relative.scale(scalar);
     }
 
     public double getBaseX() {

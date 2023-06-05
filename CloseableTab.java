@@ -1,11 +1,9 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,9 +11,6 @@ import javax.swing.JPanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class CloseableTab extends JPanel {
     private TabManager tabManager;
@@ -41,7 +36,6 @@ public class CloseableTab extends JPanel {
         this.titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
         
         this.add(this.titleLabel);
-
         this.add(new CloseButton());
     }
 
@@ -77,6 +71,7 @@ public class CloseableTab extends JPanel {
             if (getModel().isPressed()) {
                 g2.translate(1, 1);
             }
+            
             g2.setStroke(new BasicStroke(2));
             g2.setColor(Color.BLACK);
             if (getModel().isRollover()) {

@@ -10,6 +10,7 @@ public class TabManager extends JTabbedPane {
     public TabManager(ToolBar toolBar) {
         super();
         this.toolBar = toolBar;
+        this.setOpaque(false);
     }
 
     public Canvas getSelectedCanvas() {
@@ -24,13 +25,13 @@ public class TabManager extends JTabbedPane {
 
     public void addCanvas(Canvas canvas) {
         if (this.indexOfTab(canvas.getTitle()) == -1) {
-            this.add(canvas.getTitle(), canvas);
+            this.addTab(canvas.getTitle(), canvas);
         } else {
             int duplicateCount = 1;
             while (this.indexOfTab(canvas.getTitle() + " (" + duplicateCount + ")") != -1) {
                 duplicateCount++;
             }
-            this.add(canvas.getTitle() + " (" + duplicateCount + ")", canvas);
+            this.addTab(canvas.getTitle() + " (" + duplicateCount + ")", canvas);
         }
         this.setTabComponentAt(this.getTabCount() - 1, new CloseableTab(this, canvas));
     }

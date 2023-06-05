@@ -158,7 +158,7 @@ public class LilacEditor {
             }
         });
 
-        this.menuBar.addMenuItem(Const.VIEW_MENU_TEXT, Const.ZOOM_OUT_COMMAND, Const.ZOOM_IN_KEYSTROKE, new ActionListener() {
+        this.menuBar.addMenuItem(Const.VIEW_MENU_TEXT, Const.ZOOM_OUT_COMMAND, Const.ZOOM_OUT_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 zoomOut();
@@ -317,7 +317,8 @@ public class LilacEditor {
     }
 
     public boolean undo() {
-        System.out.println(Const.UNDO_COMMAND);
+        Canvas canvas = this.getSelectedCanvas();
+        canvas.undo();
         return true;
     }
 
@@ -335,11 +336,21 @@ public class LilacEditor {
     }
 
     public void zoomIn() {
+        Canvas canvas = this.getSelectedCanvas();
+        canvas.zoomIn();
         System.out.println(Const.ZOOM_IN_COMMAND);
+
+
     }
 
     public void zoomOut() {
+        Canvas canvas = this.getSelectedCanvas();
+        canvas.zoomOut();
         System.out.println(Const.ZOOM_OUT_COMMAND);
+    }
+
+    public Canvas getSelectedCanvas() {
+        return this.tabManager.getSelectedCanvas();
     }
 
     public void run() {
