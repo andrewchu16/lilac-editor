@@ -1,3 +1,4 @@
+package editor;
 import javax.swing.JPanel;
 
 abstract public class Diagram extends JPanel {

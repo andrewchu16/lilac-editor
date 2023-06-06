@@ -1,6 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -11,6 +9,14 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import editor.Canvas;
+import window.EditorMenuBar;
+import window.Settings;
+import window.TabManager;
+import window.ToolBar;
+import window.ToolButton;
+import window.UtilityButton;
 
 public class LilacEditor {
     private JFrame frame;

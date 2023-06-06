@@ -1,3 +1,4 @@
+package editor;
 import java.awt.Graphics2D;
 
 public interface Drawable {

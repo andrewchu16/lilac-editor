@@ -1,3 +1,4 @@
+package window;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,6 +9,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import editor.Canvas;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,8 +1,11 @@
+package window;
 import java.awt.Component;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JTabbedPane;
+
+import editor.Canvas;
 
 public class TabManager extends JTabbedPane {
     private ToolBar toolBar;

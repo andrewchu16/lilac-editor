@@ -1,3 +1,4 @@
+package editor;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -19,7 +20,7 @@ public class Canvas extends JScrollPane {
     private JLabel label;
     private int zoomLevelIndex;
 
-    private static final double[] ZOOM_LEVELS = {0.25, 0.5, 0.75, 0.9, 1.0, 1.15, 1.5, 2.0, 3.0};
+    private static final double[] ZOOM_LEVELS = {0.5, 0.75, 0.9, 1.0, 1.15, 1.5, 2.0};
 
     public Canvas() {
         super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
