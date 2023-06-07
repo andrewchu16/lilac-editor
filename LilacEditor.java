@@ -171,6 +171,20 @@ public class LilacEditor {
             }
         });
 
+        this.menuBar.addMenuItem(Const.VIEW_MENU_TEXT, Const.NEXT_TAB_COMMAND, Const.NEXT_TAB_KEYSTROKE, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                tabManager.swapToNextTab();
+            }
+        });
+
+        this.menuBar.addMenuItem(Const.VIEW_MENU_TEXT, Const.PREV_TAB_COMMAND, Const.PREV_TAB_KEYSTROKE, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                tabManager.swapToPreviousTab();
+            }
+        });
+
         this.menuBar.setMnemonic(Const.FILE_MENU_TEXT, Const.FILE_MENU_MNEMONIC);
         this.menuBar.setMnemonic(Const.EDIT_MENU_TEXT, Const.EDIT_MENU_MNEMONIC);
         this.menuBar.setMnemonic(Const.VIEW_MENU_TEXT, Const.VIEW_MENU_MNEMONIC);
@@ -272,7 +286,7 @@ public class LilacEditor {
     }
 
     private void setupTabManager() {
-        this.tabManager = new TabManager(this.toolBar);
+        this.tabManager = new TabManager();
 
         this.tabManager.addCanvas(new Canvas());
         this.frame.add(this.tabManager, BorderLayout.CENTER);

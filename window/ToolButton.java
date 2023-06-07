@@ -12,6 +12,7 @@ public class ToolButton extends JRadioButton {
         this.setToolTipText(toolText);
         this.setActionCommand(toolText);
         this.setBackground(Color.WHITE);
+        this.setFocusable(false);
         this.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent event) {

@@ -8,12 +8,10 @@ import javax.swing.JTabbedPane;
 import editor.Canvas;
 
 public class TabManager extends JTabbedPane {
-    private ToolBar toolBar;
-
-    public TabManager(ToolBar toolBar) {
+    public TabManager() {
         super();
-        this.toolBar = toolBar;
         this.setOpaque(false);
+        this.requestFocus();
     }
 
     public Canvas getSelectedCanvas() {
@@ -40,6 +38,16 @@ public class TabManager extends JTabbedPane {
     }
 
     @Override
+    public Component add(Component component) {
+        if (component instanceof Canvas) {
+            this.addCanvas((Canvas) component);
+            return component;
+        } else {
+            return super.add(component);
+        }
+    }
+
+    @Override
     public void remove(int index) {
         Canvas canvas = (Canvas) this.getComponentAt(index);
         String tabName = ((CloseableTab) this.getTabComponentAt(index)).getName();
@@ -56,5 +64,17 @@ public class TabManager extends JTabbedPane {
                 duplicateCount++;
             }
         }
+    }
+
+    public void swapToNextTab() {
+        int index = this.getSelectedIndex();
+        int newIndex = (index + 1) % this.getTabCount();
+        this.setSelectedIndex(newIndex);
+    }
+
+    public void swapToPreviousTab() {
+        int index = this.getSelectedIndex();
+        int newIndex = (index + this.getTabCount() - 1) % this.getTabCount();
+        this.setSelectedIndex(newIndex);
     }
 }

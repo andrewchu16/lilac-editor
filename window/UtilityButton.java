@@ -12,5 +12,6 @@ public class UtilityButton extends JButton {
         this.setToolTipText(toolTipText);
         this.setPreferredSize(new Dimension(SIZE, SIZE));
         this.addActionListener(ActionListener);
+        this.setFocusable(false);
     }
 }

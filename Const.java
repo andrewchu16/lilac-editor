@@ -29,6 +29,8 @@ public final class Const {
     public static final String PASTE_KEYSTROKE = "ctrl V";
     public static final String ZOOM_IN_KEYSTROKE = "ctrl EQUALS";
     public static final String ZOOM_OUT_KEYSTROKE = "ctrl MINUS";
+    public static final String NEXT_TAB_KEYSTROKE = "ctrl TAB";
+    public static final String PREV_TAB_KEYSTROKE = "ctrl shift TAB";
 
     // Menu Text
     public static final String FILE_MENU_TEXT = "File";
@@ -43,14 +45,19 @@ public final class Const {
     public static final String SAVE_AS_COMMAND = "Save As";
     public static final String EXPORT_COMMAND = "Export";
     public static final String EXIT_COMMAND = "Exit";
+
     public static final String UNDO_COMMAND = "Undo";
     public static final String REDO_COMMAND = "Redo";
     public static final String DELETE_COMMAND = "Delete";
     public static final String DUPLICATE_COMMAND = "Duplicate";
     public static final String COPY_COMMAND = "Copy";
     public static final String PASTE_COMMAND = "Paste";
+
     public static final String ZOOM_IN_COMMAND = "Zoom In";
     public static final String ZOOM_OUT_COMMAND = "Zoom Out";
+    public static final String NEXT_TAB_COMMAND = "Next Tab";
+    public static final String PREV_TAB_COMMAND = "Previous Tab";
+
 
     // Tool Text
     public static final String SELECT_TOOL_TEXT = "Select";
