@@ -8,10 +8,12 @@ public class EditorActionHistory {
 
     private Deque<EditorAction> past;
     private Stack<EditorAction> future;
+    private EditorAction lastPerformedAction;
 
     public EditorActionHistory() {
         this.past = new LinkedList<EditorAction>();
         this.future = new Stack<EditorAction>();
+        this.lastPerformedAction = null;
     }
 
     public void add(EditorAction action) {
@@ -21,30 +23,41 @@ public class EditorActionHistory {
         while (this.past.size() > HISTORY_LENGTH) {
             this.past.removeFirst();
         }
+
+        // Assume the action was already performed.
+        this.lastPerformedAction = action;
     }
 
-    public boolean undo() {
+    public EditorAction undo() {
         if (!this.canUndo()) { 
-            return false;
+            return null;
         }
 
-        EditorAction curAction = this.past.pop();
+        EditorAction curAction = this.past.removeLast();
         curAction.undoAction();
         this.future.push(curAction);
 
-        return true;
+        if (this.past.isEmpty()) {
+            this.lastPerformedAction = null;
+        } else {
+            this.lastPerformedAction = this.past.peek();
+        }
+
+        return curAction;
     }
 
-    public boolean redo() {
+    public EditorAction redo() {
         if (!this.canRedo()) {
-            return false;
+            return null;
         }
 
         EditorAction curAction = this.future.pop();
         curAction.doAction();
-        this.past.push(curAction);
+        this.past.addLast(curAction);
 
-        return true;
+        this.lastPerformedAction = curAction;
+
+        return curAction;
     }
 
     public boolean canUndo() {
@@ -53,5 +66,9 @@ public class EditorActionHistory {
 
     public boolean canRedo() {
         return !this.future.isEmpty();
+    }
+
+    public EditorAction getLastPerformedAction() {
+        return this.lastPerformedAction;
     }
 }
