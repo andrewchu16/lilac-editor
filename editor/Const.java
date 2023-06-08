@@ -1,3 +1,4 @@
+package editor;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -60,13 +61,13 @@ public final class Const {
 
 
     // Tool Text
-    public static final String SELECT_TOOL_TEXT = "Select";
-    public static final String CLASS_TOOL_TEXT = "Class";
-    public static final String INTERFACE_TOOL_TEXT = "Interface"; 
-    public static final String INHERITS_TOOL_TEXT = "Inherits from";
-    public static final String IMPLEMENTS_TOOL_TEXT = "Implements interface";
-    public static final String AGGREGATE_TOOL_TEXT = "Aggregate of";
-    public static final String COMPOSED_TOOL_TEXT = "Composed of";
+    public static final String SELECT_TOOL_TYPE = "Select";
+    public static final String CLASS_TOOL_TYPE = "Class";
+    public static final String INTERFACE_TOOL_TYPE = "Interface"; 
+    public static final String INHERITS_TOOL_TYPE = "Inherits from";
+    public static final String IMPLEMENTS_TOOL_TYPE = "Implements interface";
+    public static final String AGGREGATE_TOOL_TYPE = "Aggregate of";
+    public static final String COMPOSED_TOOL_TYPE = "Composed of";
 
     // Utility Button Icons
     public static final String UNDO_ICON_FILE_NAME = "./assets/undo 64x64.png";

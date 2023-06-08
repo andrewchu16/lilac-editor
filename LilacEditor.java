@@ -11,6 +11,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import editor.Canvas;
+import editor.Const;
+import editor.Tool;
 import window.EditorMenuBar;
 import window.Settings;
 import window.TabManager;
@@ -24,8 +26,10 @@ public class LilacEditor {
     private EditorMenuBar menuBar;
     private ToolBar toolBar;
     private TabManager tabManager;
+    private Tool tool;
 
     public LilacEditor() {
+        this.tool = new Tool(Const.SELECT_TOOL_TYPE);
         this.setupWindow();
         this.setupMenuBar();
         this.setupToolBar();
@@ -60,7 +64,7 @@ public class LilacEditor {
             @Override
             public void actionPerformed(ActionEvent event) {
                 System.out.println(Const.NEW_FILE_COMMAND);
-                tabManager.addCanvas(new Canvas());
+                tabManager.addCanvas(new Canvas(tool));
             }
         });
 
@@ -191,7 +195,7 @@ public class LilacEditor {
     }
 
     private void setupToolBar() {
-        this.toolBar = new ToolBar("Tool Selector");
+        this.toolBar = new ToolBar("Tool Selector", this.tool);
         this.frame.add(this.toolBar, BorderLayout.WEST);
 
         this.toolBar.addUtilityButton(
@@ -255,40 +259,40 @@ public class LilacEditor {
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.SELECT_ICON_FILE_NAME, Const.SELECT_TOOL_TEXT)
+            new ToolButton(Const.SELECT_ICON_FILE_NAME, Const.SELECT_TOOL_TYPE)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.CLASS_ICON_FILE_NAME, Const.CLASS_TOOL_TEXT)
+            new ToolButton(Const.CLASS_ICON_FILE_NAME, Const.CLASS_TOOL_TYPE)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.INTERFACE_ICON_FILE_NAME, Const.INTERFACE_TOOL_TEXT)
+            new ToolButton(Const.INTERFACE_ICON_FILE_NAME, Const.INTERFACE_TOOL_TYPE)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.INHERITS_ICON_FILE_NAME, Const.INHERITS_TOOL_TEXT)
+            new ToolButton(Const.INHERITS_ICON_FILE_NAME, Const.INHERITS_TOOL_TYPE)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.IMPLEMENTS_ICON_FILE_NAME, Const.IMPLEMENTS_TOOL_TEXT)
+            new ToolButton(Const.IMPLEMENTS_ICON_FILE_NAME, Const.IMPLEMENTS_TOOL_TYPE)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.AGGREGATE_ICON_FILE_NAME, Const.AGGREGATE_TOOL_TEXT)
+            new ToolButton(Const.AGGREGATE_ICON_FILE_NAME, Const.AGGREGATE_TOOL_TYPE)
         );
 
         this.toolBar.addToolButton(
-            new ToolButton(Const.COMPOSED_ICON_FILE_NAME, Const.COMPOSED_TOOL_TEXT)
+            new ToolButton(Const.COMPOSED_ICON_FILE_NAME, Const.COMPOSED_TOOL_TYPE)
         );
 
-        this.toolBar.setTool(Const.SELECT_TOOL_TEXT);
+        this.toolBar.setTool(Const.SELECT_TOOL_TYPE);
     }
 
     private void setupTabManager() {
         this.tabManager = new TabManager();
 
-        this.tabManager.addCanvas(new Canvas());
+        this.tabManager.addCanvas(new Canvas(this.tool));
         this.frame.add(this.tabManager, BorderLayout.CENTER);
     }
 
@@ -339,12 +343,13 @@ public class LilacEditor {
     public boolean undo() {
         Canvas canvas = this.getSelectedCanvas();
         canvas.undo();
-        return true;
+        return canvas.canUndo();
     }
 
     public boolean redo() {
-        System.out.println(Const.REDO_COMMAND);
-        return false;
+        Canvas canvas = this.getSelectedCanvas();
+        canvas.redo();
+        return canvas.canRedo();
     }
 
     public void save() {
@@ -359,8 +364,6 @@ public class LilacEditor {
         Canvas canvas = this.getSelectedCanvas();
         canvas.zoomIn();
         System.out.println(Const.ZOOM_IN_COMMAND);
-
-
     }
 
     public void zoomOut() {

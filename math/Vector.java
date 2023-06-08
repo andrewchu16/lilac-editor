@@ -1,4 +1,7 @@
 package math;
+
+import java.awt.Point;
+
 public class Vector {
     private double x;
     private double y;
@@ -34,6 +37,11 @@ public class Vector {
         this.y += vector.getY();
     }
 
+    public void sub(Vector vector) {
+        this.x -= vector.getX();
+        this.y -= vector.getY();
+    }
+
     public void scale(double scalar) {
         this.x *= scalar;
         this.y *= scalar;
@@ -42,8 +50,23 @@ public class Vector {
     public static Vector sum(Vector vector1, Vector vector2) {
         Vector sumVector = vector1.clone();
         sumVector.add(vector2);
-
         return sumVector;
+    }
+
+    public static Vector scaled(Vector vector, double scalar) {
+        Vector scaledVector = vector.clone();
+        scaledVector.scale(scalar);
+        return scaledVector;
+    }
+
+    public static Vector difference(Vector vector1, Vector vector2) {
+        Vector differenceVector = vector1.clone();
+        differenceVector.sub(vector2);
+        return differenceVector;
+    }
+
+    public Point toPoint() {
+        return new Point((int) this.x, (int) this.y);
     }
 
     @Override

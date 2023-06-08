@@ -75,7 +75,7 @@ public class Settings {
         // Try to read whether the window is maximized.
         String line;
         try {
-            line = input.nextLine().strip();
+            line = input.nextLine().trim();
         } catch (NoSuchElementException ex) {
             System.err.println("Settings file missing isMaximized. [" + this.fileName + "]");
             input.close();

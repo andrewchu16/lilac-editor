@@ -1,5 +1,14 @@
 package editor;
 public interface EditorAction {
-    public boolean doAction();
-    public boolean undoAction();
+    /**
+     * Performs the action.
+     * @return
+     */
+    public void doAction();
+
+    /**
+     * Undoes the action once performed.
+     * @return
+     */
+    public void undoAction();
 }
