@@ -16,6 +16,11 @@ public class Vector {
         this.y = y;
     }
 
+    public Vector(Point point) {
+        this.x = point.x;
+        this.y = point.y;
+    }
+
     public double getX() {
         return this.x;
     }

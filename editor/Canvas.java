@@ -4,8 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseAdapter;
@@ -63,16 +61,6 @@ public class Canvas extends JScrollPane {
         this.originalSize = new Dimension(1800, 1200);
         this.innerPanel.setLayout(null);
         
-        JLabel label = new JLabel("EHEELEFJKL");
-        label.setBorder(BorderFactory.createLineBorder(Color.PINK, 4));
-        label.setBounds(40, 50, 90, 50);
-
-        JLabel label2 = new JLabel("help me");
-        label2.setBorder(BorderFactory.createLineBorder(Color.CYAN, 3));
-        label2.setBounds(130, 100, 100, 100);
-
-        this.innerPanel.add(label);
-        this.innerPanel.add(label2);
         this.viewport.add(innerPanel);
 
         // Event Listeners
@@ -137,7 +125,7 @@ public class Canvas extends JScrollPane {
     public void zoomIn() {
         if (this.canZoomIn()) {
             this.zoomLevelIndex++;
-            this.updateCanvas();
+            this.updateCanvasZoom();
             this.repaint();
         }
     }
@@ -145,19 +133,24 @@ public class Canvas extends JScrollPane {
     public void zoomOut() {
         if (this.canZoomOut()) {
             this.zoomLevelIndex--;
-            this.updateCanvas();
-            this.repaint();
+            this.updateCanvasZoom();
         }
     }
 
-    private void updateCanvas() {
+    private void updateCanvasZoom() {
         double zoomLevel = ZOOM_LEVELS[this.zoomLevelIndex];
         this.innerPanel.setPreferredSize(new Dimension((int) (this.originalSize.getWidth() * zoomLevel), (int) (this.originalSize.getHeight() * zoomLevel)));
+        this.innerPanel.revalidate();
+        this.innerPanel.repaint();
         this.viewport.revalidate();
+        this.viewport.repaint();
+        this.repaint();
     }
 
     public void addDiagram(Diagram diagram) {
+        diagram.addMouseListener(DIAGRAM_MOUSE_LISTENER);
         this.innerPanel.add(diagram);
+        this.viewport.revalidate();
         this.innerPanel.repaint();
     }
 
@@ -185,7 +178,8 @@ public class Canvas extends JScrollPane {
     public final MouseAdapter CANVAS_MOUSE_LISTENER = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent event) {
-            if (tool.getType().equals(Const.SELECT_TOOL_TYPE)) {
+            requestFocus();
+            if (tool.getType().equals(Const.CLASS_TOOL_TYPE)) {
                 Point pos = event.getPoint();
                 Diagram diagram = new Diagram("HELP ME", pos);
                 addDiagram(diagram);
@@ -204,7 +198,7 @@ public class Canvas extends JScrollPane {
         }
     };
     
-    public final MouseMotionAdapter DIAGRAM_MOUSE_LISTENER = new MouseMotionAdapter() {
+    public final MouseMotionAdapter DIAGRAM_MOUSE_MOTION_LISTENER = new MouseMotionAdapter() {
         @Override
         public void mouseDragged(MouseEvent e) {
         }
@@ -214,11 +208,15 @@ public class Canvas extends JScrollPane {
         }
     };
 
-    public class DiagramMouseListener extends MouseAdapter {
+    public final MouseAdapter DIAGRAM_MOUSE_LISTENER = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent event) {
-            System.out.println("mouseClicked");
-            // Edit
+            if (event.getClickCount() >= 2 && event.getButton() == MouseEvent.BUTTON1) {
+                // Edit
+                System.out.println("AAA");
+                Diagram diagram = (Diagram) event.getComponent();
+                diagram.setEditable(true);
+            }
         }
 
         @Override
@@ -232,11 +230,7 @@ public class Canvas extends JScrollPane {
         @Override
         public void mouseEntered(MouseEvent event) {
         }
-
-        @Override
-        public void mouseExited(MouseEvent event) {
-        }
-    }
+    };
 
     private class InnerCanvasPanel extends JPanel {
         @Override
@@ -246,7 +240,6 @@ public class Canvas extends JScrollPane {
             super.paint(g2);
         }
     }
-
 
     public class CreateDiagramAction implements EditorAction {
         private Diagram diagram;

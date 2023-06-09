@@ -1,5 +1,7 @@
 package window;
 import java.awt.Color;
+
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
@@ -11,15 +13,17 @@ public class ToolButton extends JRadioButton {
         this.setText(toolText);
         this.setToolTipText(toolText);
         this.setActionCommand(toolText);
-        this.setBackground(Color.WHITE);
         this.setFocusable(false);
+        this.setBorderPainted(true);
+        this.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
         this.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent event) {
                 if (isSelected()) {
-                    setBackground(Color.CYAN);
+                    setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
                 } else {
-                    setBackground(Color.WHITE);
+                    setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
                 }
             }
         });
