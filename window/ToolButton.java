@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.UIManager;
 
 public class ToolButton extends JRadioButton {
     public ToolButton(String imageFileName, String toolText) {
@@ -16,14 +17,15 @@ public class ToolButton extends JRadioButton {
         this.setFocusable(false);
         this.setBorderPainted(true);
         this.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
         this.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent event) {
                 if (isSelected()) {
                     setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+                    setBackground(Color.lightGray);
                 } else {
                     setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+                    setBackground(UIManager.getColor("RadioButton.background"));
                 }
             }
         });
