@@ -1,5 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -7,7 +6,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -357,7 +355,10 @@ public class LilacEditor {
     }
 
     public void save() {
-        System.out.println(Const.SAVE_FILE_COMMAND);
+        Canvas canvas = this.getSelectedCanvas();
+        if (!canvas.isSaved()) {
+            canvas.save();
+        }
     }
 
     public void duplicateSelected() {
@@ -367,13 +368,11 @@ public class LilacEditor {
     public void zoomIn() {
         Canvas canvas = this.getSelectedCanvas();
         canvas.zoomIn();
-        System.out.println(Const.ZOOM_IN_COMMAND);
     }
 
     public void zoomOut() {
         Canvas canvas = this.getSelectedCanvas();
         canvas.zoomOut();
-        System.out.println(Const.ZOOM_OUT_COMMAND);
     }
 
     public Canvas getSelectedCanvas() {
