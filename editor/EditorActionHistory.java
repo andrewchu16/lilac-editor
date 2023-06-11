@@ -34,7 +34,7 @@ public class EditorActionHistory {
         }
 
         EditorAction curAction = this.past.removeLast();
-        curAction.undoAction();
+        curAction.undo();
         this.future.push(curAction);
 
         if (this.past.isEmpty()) {
@@ -52,7 +52,7 @@ public class EditorActionHistory {
         }
 
         EditorAction curAction = this.future.pop();
-        curAction.doAction();
+        curAction.redo();
         this.past.addLast(curAction);
 
         this.lastPerformedAction = curAction;

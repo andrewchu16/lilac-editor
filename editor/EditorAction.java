@@ -4,11 +4,11 @@ public interface EditorAction {
      * Performs the action.
      * @return
      */
-    public void doAction();
+    public void redo();
 
     /**
      * Undoes the action once performed.
      * @return
      */
-    public void undoAction();
+    public void undo();
 }

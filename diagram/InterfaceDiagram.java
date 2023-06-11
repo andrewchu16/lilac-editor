@@ -1,4 +1,4 @@
-package editor;
+package diagram;
 
 public class InterfaceDiagram {
     
