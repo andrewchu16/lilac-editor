@@ -337,6 +337,10 @@ public class LilacEditor {
                 settings.save();
             }
         });
+
+        if (!this.settings.getIsMaximized()) {
+            this.frame.pack();
+        }
     }
 
     public boolean undo() {
@@ -377,10 +381,6 @@ public class LilacEditor {
     }
 
     public void run() {
-        if (!this.settings.getIsMaximized()) {
-            this.frame.pack();
-        }
-
         this.frame.setVisible(true);
         this.frame.requestFocusInWindow();
     }
