@@ -187,17 +187,12 @@ public class Canvas extends JScrollPane {
         return ZOOM_LEVELS[this.zoomLevelIndex];
     }
 
-    private Point adjustPointForZoom(Point point) {
-        double zoomLevel = this.getZoomLevel();
-        return new Point((int) (point.x / zoomLevel), (int) (point.y / zoomLevel));
-    }
-
     public final MouseAdapter CANVAS_MOUSE_LISTENER = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent event) {
             requestFocus();
             if (tool.getType().equals(Const.CLASS_TOOL_TYPE)) {
-                Point pos = adjustPointForZoom(event.getPoint());
+                Point pos = event.getPoint();
                 Diagram diagram = new Diagram("HELP ME", pos);
                 addDiagram(diagram);
 
@@ -230,6 +225,11 @@ public class Canvas extends JScrollPane {
 
         @Override
         public void mouseClicked(MouseEvent event) {
+            if (event.getClickCount() >= 2 && event.getButton() == MouseEvent.BUTTON1) {
+                selectedDiagrams.clear();
+                Diagram diagram = (Diagram) event.getComponent();
+                selectedDiagrams.add(diagram);
+            }
         }
 
         @Override
@@ -247,10 +247,6 @@ public class Canvas extends JScrollPane {
             if (tool.equals(Const.SELECT_TOOL_TYPE)) {
                 selectedDiagrams.remove(diagram);
             }
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent event) {
         }
     };
 
