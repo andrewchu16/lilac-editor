@@ -1,18 +1,10 @@
 package editor;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.AffineTransform;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.util.ArrayList;
@@ -20,13 +12,11 @@ import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
-import javax.swing.plaf.LayerUI;
+import javax.swing.border.Border;
 
 import diagram.Diagram;
 import math.Vector;
@@ -44,11 +34,11 @@ public class Canvas extends JScrollPane {
     private ArrayList<Diagram> selectedDiagrams;
     private Tool tool;
 
-    private Dimension originalSize;
     private int zoomLevelIndex;
 
     private static final double[] ZOOM_LEVELS = { 0.5, 0.75, 0.9, 1.0, 1.15, 1.5, 2.0 };
     private static final String DEFAULT_CANVAS_NAME = "./untitled.canvas";
+    private static final Dimension DEFAULT_CANVAS_SIZE = new Dimension(1920, 1080);
 
     public Canvas(Tool tool) {
         this(DEFAULT_CANVAS_NAME, tool);
@@ -63,15 +53,13 @@ public class Canvas extends JScrollPane {
         this.selectedDiagrams = new ArrayList<Diagram>();
         this.tool = tool;
         this.zoomLevelIndex = Arrays.binarySearch(ZOOM_LEVELS, 1.0);
-        this.originalSize = new Dimension(1800, 1200);
 
         this.getHorizontalScrollBar().setUnitIncrement(4);
         this.getVerticalScrollBar().setUnitIncrement(4);
-        this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
         this.layerUI = new ZoomUI();
         this.innerPanel = new JPanel();
-        this.innerPanel.setPreferredSize(this.originalSize);
+        this.innerPanel.setPreferredSize(DEFAULT_CANVAS_SIZE);
         this.innerPanel.setLayout(null);
         this.layer = new JLayer<JComponent>(this.innerPanel, this.layerUI);
 
@@ -141,7 +129,6 @@ public class Canvas extends JScrollPane {
     public void zoomIn() {
         if (this.canZoomIn()) {
             this.zoomLevelIndex++;
-            this.layerUI.setZoom(this.getZoomLevel());
             this.updateCanvas();
         }
     }
@@ -149,15 +136,12 @@ public class Canvas extends JScrollPane {
     public void zoomOut() {
         if (this.canZoomOut()) {
             this.zoomLevelIndex--;
-            this.layerUI.setZoom(this.getZoomLevel());
             this.updateCanvas();
         }
     }
 
     private void updateCanvas() {
-        double zoomLevel = this.getZoomLevel();
-        this.innerPanel.setPreferredSize(new Dimension((int) (this.originalSize.getWidth() * zoomLevel),
-                (int) (this.originalSize.getHeight() * zoomLevel)));
+        this.layerUI.setZoom(this.getZoomLevel());
         this.revalidate();
         this.repaint();
     }

@@ -27,6 +27,23 @@ public class ZoomUI extends LayerUI<JComponent> {
     }
 
     @Override
+    public void installUI(JComponent component) {
+        super.installUI(component);
+
+        installedLayer = (JLayer<JComponent>) component;
+        installedLayer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+    }
+
+    @Override
+    public void uninstallUI(JComponent component) {
+        JLayer<JComponent> layer = (JLayer<JComponent>) component;
+        layer.setLayerEventMask(0);
+        super.uninstallUI(component);
+    }
+
+
+
+    @Override
     public void eventDispatched(AWTEvent event, final JLayer<? extends JComponent> layer) {
         if (event instanceof MouseEvent) {
             MouseEvent mouseEvent = (MouseEvent) event;
@@ -48,37 +65,21 @@ public class ZoomUI extends LayerUI<JComponent> {
 
     @Override
     public void paint(Graphics graphics, JComponent component) {
-        if (graphics instanceof Graphics2D) {
-            Graphics2D g2 = (Graphics2D) graphics.create();
-            JLayer<? extends JComponent> layer = (JLayer<? extends JComponent>) component;
-            g2.transform(transform);
-            JComponent view = layer.getView();
-            if (view != null) {
-                if (view.getX() < 0 || view.getY() < 0) {
-                    g2.translate(view.getX(), view.getY());
-                    view.paint(g2);
-                } else {
-                    layer.paint(g2);
-                }
+        Graphics2D g2 = (Graphics2D) graphics.create();
+        JLayer<? extends JComponent> layer = (JLayer<? extends JComponent>) component;
+        g2.transform(transform);
+
+        JComponent view = layer.getView();
+        if (view != null) {
+            if (view.getX() < 0 || view.getY() < 0) {
+                g2.translate(view.getX(), view.getY());
+                view.paint(g2);
+            } else {
+                layer.paint(g2);
             }
-            g2.dispose();
         }
-    }
 
-    @Override
-    public void uninstallUI(JComponent component) {
-        JLayer<JComponent> layer = (JLayer<JComponent>) component;
-        layer.setLayerEventMask(0);
-        super.uninstallUI(component);
-    }
-
-    @Override
-    public void installUI(JComponent component) {
-        super.installUI(component);
-
-        installedLayer = (JLayer<JComponent>) component;
-        installedLayer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK
-                | AWTEvent.MOUSE_WHEEL_EVENT_MASK | AWTEvent.KEY_EVENT_MASK | AWTEvent.FOCUS_EVENT_MASK);
+        g2.dispose();
     }
 
     private void redispatchMouseEvent(MouseEvent originalEvent, JLayer<? extends JComponent> layer) {
@@ -97,27 +98,27 @@ public class ZoomUI extends LayerUI<JComponent> {
 
             switch (originalEvent.getID()) {
             case MouseEvent.MOUSE_PRESSED:
-                newEvent = transformMouseEvent(layer, originalEvent, realTarget, realPoint);
+                newEvent = transformMouseEvent(layer, originalEvent, realTarget, realPoint, originalEvent.getID());
                 if (newEvent != null) {
                     lastPressedTarget = newEvent.getComponent();
                 }
                 break;
             case MouseEvent.MOUSE_RELEASED:
-                newEvent = transformMouseEvent(layer, originalEvent, lastPressedTarget, realPoint);
+                newEvent = transformMouseEvent(layer, originalEvent, lastPressedTarget, realPoint, originalEvent.getID());
                 lastPressedTarget = null;
                 break;
             case MouseEvent.MOUSE_CLICKED:
-                newEvent = transformMouseEvent(layer, originalEvent, realTarget, realPoint);
+                newEvent = transformMouseEvent(layer, originalEvent, realTarget, realPoint, originalEvent.getID());
                 lastPressedTarget = null;
                 break;
             case MouseEvent.MOUSE_MOVED:
-                newEvent = transformMouseEvent(layer, originalEvent, realTarget, realPoint);
+                newEvent = transformMouseEvent(layer, originalEvent, realTarget, realPoint, originalEvent.getID());
             case MouseEvent.MOUSE_ENTERED:
             case MouseEvent.MOUSE_EXITED:
                 generateEnterExitEvents(layer, originalEvent, realTarget, realPoint);
                 break;
             case MouseEvent.MOUSE_DRAGGED:
-                newEvent = transformMouseEvent(layer, originalEvent, lastPressedTarget, realPoint);
+                newEvent = transformMouseEvent(layer, originalEvent, lastPressedTarget, realPoint, originalEvent.getID());
                 generateEnterExitEvents(layer, originalEvent, realTarget, realPoint);
                 break;
             }
@@ -126,12 +127,10 @@ public class ZoomUI extends LayerUI<JComponent> {
     }
 
     private Point transformPoint(JLayer<? extends JComponent> layer, Point point) {
-        if (transform != null) {
-            try {
-                transform.inverseTransform(point, point);
-            } catch (NoninvertibleTransformException e) {
-                e.printStackTrace();
-            }
+        try {
+            transform.inverseTransform(point, point);
+        } catch (NoninvertibleTransformException event) {
+            event.printStackTrace();
         }
         return point;
     }
@@ -152,10 +151,6 @@ public class ZoomUI extends LayerUI<JComponent> {
 
         point = SwingUtilities.convertPoint(mouseEvent.getComponent(), point, layer);
         return transformPoint(layer, point);
-    }
-
-    private MouseEvent transformMouseEvent(JLayer<? extends JComponent> layer, MouseEvent mouseEvent, Component target, Point realPoint) {
-        return transformMouseEvent(layer, mouseEvent, target, realPoint, mouseEvent.getID());
     }
 
     private MouseEvent transformMouseEvent(JLayer<? extends JComponent> layer, MouseEvent mouseEvent, Component target, Point targetPoint, int id) {
