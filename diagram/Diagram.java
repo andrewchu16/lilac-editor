@@ -1,5 +1,6 @@
 package diagram;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,16 +14,16 @@ import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import math.Vector;
+import utility.Vector;
 
 public class Diagram extends JPanel {
     public static final int MIN_WIDTH = 150;
     public static final int MIN_HEIGHT = 70;
-    private boolean isLocked;
     private DiagramTitle title;
     
     public Diagram(String titleText, Point pos) {
@@ -41,8 +42,6 @@ public class Diagram extends JPanel {
         
         this.title = new DiagramTitle(titleText);
         this.add(this.title, constraints);
-
-        this.setLocked(false);
     }
 
     public Vector getPos() {
@@ -55,14 +54,6 @@ public class Diagram extends JPanel {
 
     public void shiftPos(Vector changeInPos) {
         this.setLocation(this.getX() + (int) changeInPos.getX(), this.getY() + (int) changeInPos.getY());
-    }
-
-    public boolean isLocked() {
-        return this.isLocked;
-    }
-
-    public void setLocked(boolean isLocked) {
-        this.isLocked = isLocked;
     }
 
     public void setTitle(String titleText) {
@@ -78,23 +69,33 @@ public class Diagram extends JPanel {
     }
 
     public void resizeDiagramToFit() {
-        int newWidth = (int) Math.max(this.title.getPreferredSize().getWidth(), MIN_WIDTH);
-        int newHeight = (int) Math.max(this.title.getPreferredSize().getHeight(), MIN_HEIGHT);
+        int newWidth = (int) Math.max(this.title.getPreferredWidth(), MIN_WIDTH);
+        int newHeight = (int) Math.max(this.title.getPreferredHeight(), MIN_HEIGHT);
 
         this.setSize(newWidth, newHeight);
         this.revalidate();
     }
 
-    private class DiagramTitle extends JTextField {
+    public DiagramTitle getDiagramTitle() {
+        return this.title;
+    }
+
+    @Override
+    public void setEnabled(boolean isEnabled) {
+        super.setEnabled(isEnabled);
+        this.title.setEnabled(isEnabled);
+    }
+
+    public class DiagramTitle extends JTextField {
         String lastTitleText;
 
         public DiagramTitle(String titleText) {
             super(titleText);
             this.lastTitleText = titleText;
             this.setHorizontalAlignment(JTextField.CENTER);
-            this.addFocusListener(DIAGRAM_TITLE_FOCUS_LISTENER);
-            this.addMouseListener(DIAGRAM_TITLE_MOUSE_LISTENER);
-            this.getDocument().addDocumentListener(DIAGRAM_TITLE_DOCUMENT_LISTENER);
+            this.addFocusListener(STOP_EDIT_ON_UNFOCUS);
+            this.addMouseListener(EDIT_ON_DOUBLECLICK);
+            this.getDocument().addDocumentListener(RESIZE_ON_EDIT);
 
             this.setBackground(Color.WHITE);
             this.setDisabledTextColor(Color.BLACK);
@@ -114,36 +115,82 @@ public class Diagram extends JPanel {
             return this.lastTitleText;
         }
 
-        public final DocumentListener DIAGRAM_TITLE_DOCUMENT_LISTENER = new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent event) {
-                resizeDiagramToFit();
-            }
+        public int getPreferredWidth() {
+            return (int) this.getPreferredSize().getWidth();
+        }
 
-            @Override
-            public void removeUpdate(DocumentEvent event) {
-                resizeDiagramToFit();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent event) {}   
-        };
-
-        public final FocusListener DIAGRAM_TITLE_FOCUS_LISTENER = new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent event) {
-                setEnabled(false);
-            }
-        };
-
-        public final MouseListener DIAGRAM_TITLE_MOUSE_LISTENER = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                if (event.getClickCount() >= 2) {
-                    setEnabled(true);
-                    requestFocus();
-                }
-            }
-        };
+        public int getPreferredHeight() {
+            return (int) this.getPreferredSize().getHeight();
+        }
     }
+
+    public class DiagramBody extends JTextArea {
+        String lastText;
+
+        public DiagramBody() {
+            super(1, 1);
+            this.lastText = "";
+            this.addFocusListener(STOP_EDIT_ON_UNFOCUS);
+            this.addMouseListener(EDIT_ON_DOUBLECLICK);
+            this.getDocument().addDocumentListener(RESIZE_ON_EDIT);
+
+            this.setDisabledTextColor(Color.BLACK);
+            this.setEnabled(false);
+        }
+
+        public void setText(String text) {
+            this.lastText = this.getMethodText();
+            this.setText(text);
+        }
+
+        public String getMethodText() {
+            return this.getText();
+        }
+
+        public String getLastText() {
+            return this.lastText;
+        }
+
+        public int getPreferredWidth() {
+            return (int) this.getPreferredSize().getWidth();
+        }
+
+        public int getPreferredHeight() {
+            return (int) this.getPreferredSize().getHeight();
+        }
+    }
+
+    public final FocusListener STOP_EDIT_ON_UNFOCUS = new FocusAdapter() {
+        @Override
+        public void focusLost(FocusEvent event) {
+            Component component = event.getComponent();
+            component.setEnabled(false);
+        }
+    };
+
+    public final MouseListener EDIT_ON_DOUBLECLICK = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent event) {
+            if (event.getClickCount() >= 2) {
+                Component component = event.getComponent();
+                component.setEnabled(true);
+                component.requestFocus();
+            }
+        }
+    };
+
+    public final DocumentListener RESIZE_ON_EDIT = new DocumentListener() {
+    @Override
+    public void insertUpdate(DocumentEvent event) {
+        resizeDiagramToFit();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent event) {
+        resizeDiagramToFit();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent event) {}   
+};
 }

@@ -1,4 +1,5 @@
-package math;
+package utility;
+
 public class RelativeVector extends Vector {
     private Vector base;
     private Vector relative; 

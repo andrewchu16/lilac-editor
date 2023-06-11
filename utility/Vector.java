@@ -1,4 +1,4 @@
-package math;
+package utility;
 
 import java.awt.Point;
 

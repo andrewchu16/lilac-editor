@@ -18,8 +18,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.border.Border;
 
+import diagram.ClassDiagram;
 import diagram.Diagram;
-import math.Vector;
+import diagram.InterfaceDiagram;
+import utility.Vector;
 
 public class Canvas extends JScrollPane {
     private File file;
@@ -177,7 +179,14 @@ public class Canvas extends JScrollPane {
             requestFocus();
             if (tool.getType().equals(Const.CLASS_TOOL_TYPE)) {
                 Point pos = event.getPoint();
-                Diagram diagram = new Diagram("HELP ME", pos);
+                Diagram diagram = new ClassDiagram("HELP ME CLASS", pos);
+                addDiagram(diagram);
+
+                CreateDiagramAction action = new CreateDiagramAction(diagram);
+                actionHistory.add(action);
+            } else if (tool.getType().equals(Const.INTERFACE_TOOL_TYPE)) {
+                Point pos = event.getPoint();
+                Diagram diagram = new InterfaceDiagram("HELP ME INTERFACE", pos);
                 addDiagram(diagram);
 
                 CreateDiagramAction action = new CreateDiagramAction(diagram);
