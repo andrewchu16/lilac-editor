@@ -43,6 +43,18 @@ public class ClassDiagram extends Diagram {
         return this.methods.getLastText();
     }
 
+    public void setProertiesText(String propertiesText) {
+        this.properties.setText(propertiesText);
+    }
+
+    public String getProertiesText() {
+        return this.properties.getText();
+    }
+
+    public String setLastProertiesText() {
+        return this.properties.getLastText();
+    }
+
     @Override
     public void setEnabled(boolean isEnabled) {
         super.setEnabled(isEnabled);
