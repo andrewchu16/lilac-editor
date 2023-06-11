@@ -1,22 +1,23 @@
 package editor;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
-import javax.swing.border.Border;
 
 import diagram.ClassDiagram;
 import diagram.Diagram;
@@ -55,10 +56,10 @@ public class Canvas extends JScrollPane {
         this.selectedDiagrams = new ArrayList<Diagram>();
         this.tool = tool;
         this.zoomLevelIndex = Arrays.binarySearch(ZOOM_LEVELS, 1.0);
-
+        
         this.getHorizontalScrollBar().setUnitIncrement(4);
         this.getVerticalScrollBar().setUnitIncrement(4);
-
+        
         this.layerUI = new ZoomUI();
         this.innerPanel = new JPanel();
         this.innerPanel.setPreferredSize(DEFAULT_CANVAS_SIZE);
@@ -150,6 +151,7 @@ public class Canvas extends JScrollPane {
 
     public void addDiagram(Diagram diagram) {
         diagram.addMouseListener(DIAGRAM_MOUSE_LISTENER);
+        diagram.addFocusListener(DIAGRAM_FOCUS_LISTENER);
         this.innerPanel.add(diagram);
         this.updateCanvas();
     }
@@ -160,13 +162,19 @@ public class Canvas extends JScrollPane {
     }
 
     public void moveDiagrams(Vector changeInPos) {
-        for (Diagram diagram : this.selectedDiagrams) {
+        for (Diagram diagram: this.selectedDiagrams) {
             diagram.shiftPos(changeInPos);
         }
     }
 
     public void export() {
 
+    }
+
+    public void delete() {
+        for (Diagram diagram: this.selectedDiagrams) {
+            this.removeDiagram(diagram);
+        }
     }
 
     public double getZoomLevel() {
@@ -179,14 +187,14 @@ public class Canvas extends JScrollPane {
             requestFocus();
             if (tool.getType().equals(Const.CLASS_TOOL_TYPE)) {
                 Point pos = event.getPoint();
-                Diagram diagram = new ClassDiagram("HELP ME CLASS", pos);
+                Diagram diagram = new ClassDiagram("New Class", pos);
                 addDiagram(diagram);
 
                 CreateDiagramAction action = new CreateDiagramAction(diagram);
                 actionHistory.add(action);
             } else if (tool.getType().equals(Const.INTERFACE_TOOL_TYPE)) {
                 Point pos = event.getPoint();
-                Diagram diagram = new InterfaceDiagram("HELP ME INTERFACE", pos);
+                Diagram diagram = new InterfaceDiagram("New Inerface", pos);
                 addDiagram(diagram);
 
                 CreateDiagramAction action = new CreateDiagramAction(diagram);
@@ -241,6 +249,27 @@ public class Canvas extends JScrollPane {
                 selectedDiagrams.remove(diagram);
             }
         }
+    };
+
+    public final FocusListener DIAGRAM_FOCUS_LISTENER = new FocusListener() {
+        @Override
+        public void focusGained(FocusEvent event) {
+        }
+
+        @Override
+        public void focusLost(FocusEvent event) {
+            Component diagramChild = event.getComponent();
+            Diagram diagram = (Diagram) diagramChild.getParent();
+
+            // Part of the diagram lost focus but another part is still enabled.
+            if (diagram.isEnabled()) {
+                return;
+            }
+
+            EditorAction action = new EditDiagramTextAction(diagram);
+            actionHistory.add(action);
+        }
+        
     };
 
     public class CreateDiagramAction implements EditorAction {
@@ -310,25 +339,55 @@ public class Canvas extends JScrollPane {
         }
     }
 
-    public class EditDiagramAction implements EditorAction {
+    public class EditDiagramTextAction implements EditorAction {
         private Diagram diagram;
         private String oldTitleText;
         private String newTitleText;
+        private String oldMethodText;
+        private String newMethodText;
+        private String oldPropertiesText;
+        private String newPropertiesText;
 
-        public EditDiagramAction(Diagram diagram, String oldText, String newText) {
+        public EditDiagramTextAction(Diagram diagram) {
             this.diagram = diagram;
-            this.oldTitleText = oldText;
-            this.newTitleText = newText;
+            this.oldTitleText = diagram.getLastTitle();
+            this.newTitleText = diagram.getTitle();
+
+            if (diagram instanceof InterfaceDiagram) {
+                this.oldMethodText = ((InterfaceDiagram) diagram).getLastMethodText();
+                this.newMethodText = ((InterfaceDiagram) diagram).getMethodText();
+            }
+
+            if (diagram instanceof ClassDiagram) {
+                this.oldPropertiesText = ((ClassDiagram) diagram).getLastPropertiesText();
+                this.newPropertiesText = ((ClassDiagram) diagram).getPropertiesText();
+            }
         }
 
         @Override
         public void redo() {
             this.diagram.setTitle(this.newTitleText);
+
+            if (this.diagram instanceof InterfaceDiagram) {
+                ((InterfaceDiagram) this.diagram).setMethodText(this.newMethodText);
+            }
+            
+            if (this.diagram instanceof ClassDiagram) {
+                ((ClassDiagram) this.diagram).setPropertiesText(this.newPropertiesText);
+            }
         }
 
         @Override
         public void undo() {
             this.diagram.setTitle(this.oldTitleText);
+            
+            if (this.diagram instanceof InterfaceDiagram) {
+                ((InterfaceDiagram) this.diagram).setMethodText(this.oldMethodText);
+            }
+            
+            if (this.diagram instanceof ClassDiagram) {
+                ((ClassDiagram) this.diagram).setPropertiesText(this.oldPropertiesText);
+            }
         }
     }
 }

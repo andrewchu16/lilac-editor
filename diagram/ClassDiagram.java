@@ -1,75 +1,83 @@
 package diagram;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.FocusListener;
 
-import javax.swing.BorderFactory;
-
-public class ClassDiagram extends Diagram {
-    private DiagramBody methods;
-    private DiagramBody properties;
-
+public class ClassDiagram extends InterfaceDiagram {
     public ClassDiagram(String titleText, Point pos) {
         super(titleText, pos);
         
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridy = 1;
+        constraints.gridx = 0;
         constraints.weightx = 1;
         constraints.weighty = 1;
         constraints.fill = GridBagConstraints.BOTH;
         constraints.insets = new Insets(2, 2, 2, 2);
 
-        this.properties = new DiagramBody();
-        this.properties.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-        this.add(this.properties, constraints);
-
-        constraints.gridy = 2;
-        this.methods = new DiagramBody();
-        this.add(this.methods, constraints);
+        this.add(new DiagramBody(), constraints);
         this.resizeDiagramToFit();
     }
-
-    public void setMethodText(String methodText) {
-        this.methods.setText(methodText);
+    
+    public void setPropertiesText(String propertiesText) {
+        this.getPropertiesBody().setText(propertiesText);
     }
 
-    public String getMethodText() {
-        return this.methods.getText();
+    public String getPropertiesText() {
+        return this.getPropertiesBody().getText();
     }
 
-    public String getLastMethodText() {
-        return this.methods.getLastText();
+    public String getLastPropertiesText() {
+        return this.getPropertiesBody().getLastText();
     }
 
-    public void setProertiesText(String propertiesText) {
-        this.properties.setText(propertiesText);
+    public DiagramBody getPropertiesBody() {
+        return this.getBody(0);
     }
 
-    public String getProertiesText() {
-        return this.properties.getText();
-    }
-
-    public String setLastProertiesText() {
-        return this.properties.getLastText();
+    @Override
+    public DiagramBody getMethodBody() {
+        return this.getBody(1);
     }
 
     @Override
     public void setEnabled(boolean isEnabled) {
         super.setEnabled(isEnabled);
-        this.methods.setEnabled(isEnabled);
+        this.getPropertiesBody().setEnabled(isEnabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return super.isEnabled() || this.getPropertiesBody().isEnabled();
+    }
+    
+    @Override
+    public void addFocusListener(FocusListener focusListener) {
+        super.addFocusListener(focusListener);
+        this.getPropertiesBody().addFocusListener(focusListener);
+    }
+
+    @Override
+    public boolean isFocusOwner() {
+        return super.isFocusOwner() || this.getPropertiesBody().isFocusOwner();
     }
 
     @Override
     public void resizeDiagramToFit() {
+        if (this.getNumBodies() != 2) {
+            return;
+        }
+
         DiagramTitle diagramTitle = this.getDiagramTitle();
 
         int newWidth = Math.max(diagramTitle.getPreferredWidth(), MIN_WIDTH);
-        newWidth = Math.max(newWidth, this.properties.getPreferredWidth());
-        newWidth = Math.max(newWidth, this.methods.getPreferredWidth());
+        newWidth = Math.max(newWidth, this.getPropertiesBody().getPreferredWidth());
+        newWidth = Math.max(newWidth, this.getMethodBody().getPreferredWidth());
 
-        int newHeight = diagramTitle.getPreferredHeight() + this.properties.getPreferredHeight() + this.methods.getPreferredHeight();
+        int newHeight = diagramTitle.getPreferredHeight() + 
+                this.getPropertiesBody().getPreferredHeight() + 
+                this.getMethodBody().getPreferredHeight();
         newHeight = Math.max(newHeight, MIN_HEIGHT);
 
         this.setSize(newWidth + 2, newHeight + 4);

@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -34,7 +33,7 @@ abstract public class Diagram extends JPanel {
         this.setBackground(Color.WHITE);
 
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridy = 0;
+        constraints.gridx = 0;
         constraints.weightx = 1;
         constraints.weighty = 1;
         constraints.fill = GridBagConstraints.BOTH;
@@ -85,6 +84,22 @@ abstract public class Diagram extends JPanel {
         this.title.setEnabled(isEnabled);
     }
 
+    @Override
+    public boolean isEnabled() {
+        return this.title.isEnabled();
+    }
+
+    @Override
+    public void addFocusListener(FocusListener focusListener) {
+        // super.addFocusListener(focusListener);
+        this.title.addFocusListener(focusListener);
+    }
+
+    @Override
+    public boolean isFocusOwner() {
+        return super.isFocusOwner() || this.title.isFocusOwner();
+    }
+
     public class DiagramTitle extends JTextField {
         String lastTitleText;
 
@@ -95,10 +110,10 @@ abstract public class Diagram extends JPanel {
             this.addFocusListener(STOP_EDIT_ON_UNFOCUS);
             this.addMouseListener(EDIT_ON_DOUBLECLICK);
             this.getDocument().addDocumentListener(RESIZE_ON_EDIT);
-
             this.setBackground(Color.WHITE);
             this.setDisabledTextColor(Color.BLACK);
             this.setEnabled(false);
+            this.setBorder(BorderFactory.createEmptyBorder());
         }
 
         public void setTitle(String titleText) {
@@ -132,18 +147,14 @@ abstract public class Diagram extends JPanel {
             this.addFocusListener(STOP_EDIT_ON_UNFOCUS);
             this.addMouseListener(EDIT_ON_DOUBLECLICK);
             this.getDocument().addDocumentListener(RESIZE_ON_EDIT);
-
             this.setDisabledTextColor(Color.BLACK);
+            this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
             this.setEnabled(false);
         }
 
         public void setText(String text) {
-            this.lastText = this.getMethodText();
-            this.setText(text);
-        }
-
-        public String getMethodText() {
-            return this.getText();
+            this.lastText = this.getText();
+            super.setText(text);
         }
 
         public String getLastText() {
@@ -179,17 +190,17 @@ abstract public class Diagram extends JPanel {
     };
 
     public final DocumentListener RESIZE_ON_EDIT = new DocumentListener() {
-    @Override
-    public void insertUpdate(DocumentEvent event) {
-        resizeDiagramToFit();
-    }
+        @Override
+        public void insertUpdate(DocumentEvent event) {
+            resizeDiagramToFit();
+        }
 
-    @Override
-    public void removeUpdate(DocumentEvent event) {
-        resizeDiagramToFit();
-    }
+        @Override
+        public void removeUpdate(DocumentEvent event) {
+            resizeDiagramToFit();
+        }
 
-    @Override
-    public void changedUpdate(DocumentEvent event) {}   
-};
+        @Override
+        public void changedUpdate(DocumentEvent event) {}   
+    };
 }

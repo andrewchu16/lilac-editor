@@ -206,7 +206,6 @@ public class LilacEditor {
                 public void actionPerformed(ActionEvent event) {
                     undo();
                 }
-                
             })
         );
 
@@ -216,7 +215,6 @@ public class LilacEditor {
                 public void actionPerformed(ActionEvent event) {
                     redo();
                 }
-                
             })
         );
 
@@ -226,7 +224,6 @@ public class LilacEditor {
                 public void actionPerformed(ActionEvent event) {
                     save();
                 }
-                
             })
         );
 
@@ -236,7 +233,6 @@ public class LilacEditor {
                 public void actionPerformed(ActionEvent event) {
                     duplicateSelected();
                 }
-                
             })
         );
 
@@ -246,7 +242,6 @@ public class LilacEditor {
                 public void actionPerformed(ActionEvent event) {
                     zoomIn();
                 }
-                
             })
         );
 
@@ -256,7 +251,6 @@ public class LilacEditor {
                 public void actionPerformed(ActionEvent event) {
                     zoomOut();
                 }
-                
             })
         );
 
@@ -315,6 +309,7 @@ public class LilacEditor {
         }
 
         this.frame.addComponentListener(new ComponentAdapter() {
+            @Override
             public void componentMoved(ComponentEvent event) {
                 boolean isMaximized = (frame.getLocation().getX() < 0);
                 if (!isMaximized) {
@@ -322,8 +317,10 @@ public class LilacEditor {
                 }
             }
 
+            @Override
             public void componentResized(ComponentEvent event) {
-                boolean isMaximized = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+                // boolean isMaximized = (frame.getLocation().getX() < 0);
+                boolean isMaximized = (frame.getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0;
                 if (!isMaximized) {
                     if (settings.getIsMaximized()) {
                         frame.setSize(settings.getWindowDimension());
