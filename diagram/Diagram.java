@@ -91,8 +91,12 @@ abstract public class Diagram extends JPanel {
 
     @Override
     public void addFocusListener(FocusListener focusListener) {
-        // super.addFocusListener(focusListener);
         this.title.addFocusListener(focusListener);
+    }
+
+    @Override
+    public void addMouseListener(MouseListener mouseListener) {
+        this.title.addMouseListener(mouseListener);
     }
 
     @Override
@@ -181,10 +185,10 @@ abstract public class Diagram extends JPanel {
     public final MouseListener EDIT_ON_DOUBLECLICK = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent event) {
+            Component component = event.getComponent();
+            component.requestFocus();
             if (event.getClickCount() >= 2) {
-                Component component = event.getComponent();
                 component.setEnabled(true);
-                component.requestFocus();
             }
         }
     };

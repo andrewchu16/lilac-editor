@@ -4,6 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class InterfaceDiagram extends Diagram {
@@ -70,6 +71,12 @@ public class InterfaceDiagram extends Diagram {
         this.getMethodBody().addFocusListener(focusListener);
     }
 
+    @Override
+    public void addMouseListener(MouseListener mouseListener) {
+        super.addMouseListener(mouseListener);
+        this.getMethodBody().addMouseListener(mouseListener);
+    }
+    
     @Override
     public boolean isFocusOwner() {
         return super.isFocusOwner() || this.getMethodBody().isFocusOwner();

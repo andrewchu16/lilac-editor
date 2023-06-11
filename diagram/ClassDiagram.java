@@ -4,6 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseListener;
 
 public class ClassDiagram extends InterfaceDiagram {
     public ClassDiagram(String titleText, Point pos) {
@@ -19,7 +20,7 @@ public class ClassDiagram extends InterfaceDiagram {
         this.add(new DiagramBody(), constraints);
         this.resizeDiagramToFit();
     }
-    
+
     public void setPropertiesText(String propertiesText) {
         this.getPropertiesBody().setText(propertiesText);
     }
@@ -56,6 +57,12 @@ public class ClassDiagram extends InterfaceDiagram {
     public void addFocusListener(FocusListener focusListener) {
         super.addFocusListener(focusListener);
         this.getPropertiesBody().addFocusListener(focusListener);
+    }
+
+    @Override
+    public void addMouseListener(MouseListener mouseListener) {
+        super.addMouseListener(mouseListener);
+        this.getPropertiesBody().addMouseListener(mouseListener);
     }
 
     @Override
