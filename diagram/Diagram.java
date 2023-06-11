@@ -78,8 +78,8 @@ public class Diagram extends JPanel {
     }
 
     public void resizeDiagramToFit() {
-        int newWidth = Math.max(this.title.getWidth(), MIN_WIDTH);
-        int newHeight = Math.max(this.title.getHeight(), MIN_HEIGHT);
+        int newWidth = (int) Math.max(this.title.getPreferredSize().getWidth(), MIN_WIDTH);
+        int newHeight = (int) Math.max(this.title.getPreferredSize().getHeight(), MIN_HEIGHT);
 
         this.setSize(newWidth, newHeight);
         this.revalidate();

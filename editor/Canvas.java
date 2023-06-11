@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.AffineTransform;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -35,8 +36,8 @@ public class Canvas extends JScrollPane {
     private String title;
     private JViewport viewport;
     private JPanel innerPanel;
-    private JLayer<JPanel> layer;
-    private LayerUI<JPanel> layerUI;
+    private JLayer<JComponent> layer;
+    private ZoomUI layerUI;
 
     private EditorActionHistory actionHistory;
     private EditorAction lastSavedAction;
@@ -68,11 +69,11 @@ public class Canvas extends JScrollPane {
         this.getVerticalScrollBar().setUnitIncrement(4);
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
-        this.layerUI = new ZoomLayerUI();
+        this.layerUI = new ZoomUI();
         this.innerPanel = new JPanel();
         this.innerPanel.setPreferredSize(this.originalSize);
         this.innerPanel.setLayout(null);
-        this.layer = new JLayer<JPanel>(this.innerPanel, this.layerUI);
+        this.layer = new JLayer<JComponent>(this.innerPanel, this.layerUI);
 
         this.viewport = new JViewport();
         this.setViewport(viewport);
@@ -140,14 +141,15 @@ public class Canvas extends JScrollPane {
     public void zoomIn() {
         if (this.canZoomIn()) {
             this.zoomLevelIndex++;
+            this.layerUI.setZoom(this.getZoomLevel());
             this.updateCanvas();
-            this.repaint();
         }
     }
 
     public void zoomOut() {
         if (this.canZoomOut()) {
             this.zoomLevelIndex--;
+            this.layerUI.setZoom(this.getZoomLevel());
             this.updateCanvas();
         }
     }
@@ -156,12 +158,6 @@ public class Canvas extends JScrollPane {
         double zoomLevel = this.getZoomLevel();
         this.innerPanel.setPreferredSize(new Dimension((int) (this.originalSize.getWidth() * zoomLevel),
                 (int) (this.originalSize.getHeight() * zoomLevel)));
-        this.innerPanel.revalidate();
-        this.innerPanel.repaint();
-        this.layer.revalidate();
-        this.layer.repaint();
-        this.viewport.revalidate();
-        this.viewport.repaint();
         this.revalidate();
         this.repaint();
     }
@@ -200,7 +196,6 @@ public class Canvas extends JScrollPane {
         @Override
         public void mouseClicked(MouseEvent event) {
             requestFocus();
-            System.out.println(event.getID());
             if (tool.getType().equals(Const.CLASS_TOOL_TYPE)) {
                 Point pos = adjustPointForZoom(event.getPoint());
                 Diagram diagram = new Diagram("HELP ME", pos);
@@ -345,83 +340,6 @@ public class Canvas extends JScrollPane {
         @Override
         public void undo() {
             this.diagram.setTitle(this.oldTitleText);
-        }
-    }
-
-    public class ZoomLayerUI extends LayerUI<JPanel> {
-        private boolean dispatchingMode;
-
-        public ZoomLayerUI() {
-            super();
-            this.dispatchingMode = false;
-        }
-
-        @Override
-
-        public void installUI(JComponent component) {
-            super.installUI(component);
-            JLayer<JPanel> layer = (JLayer<JPanel>) component;
-            layer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK & 0);
-        }
-
-        @Override
-        public void paint(Graphics graphics, JComponent component) {
-            Graphics2D g2 = (Graphics2D) graphics.create();
-            g2.scale(getZoomLevel(), getZoomLevel());
-            super.paint(g2, component);
-            g2.dispose();
-        }
-
-        @Override
-        public void uninstallUI(JComponent component) {
-            JLayer<JPanel> layer = (JLayer<JPanel>) component;
-            layer.setLayerEventMask(0);
-            super.uninstallUI(component);
-        }
-
-        @Override
-        public void eventDispatched(AWTEvent event, final JLayer<? extends JPanel> layer) {
-            if (event instanceof MouseEvent) {
-                MouseEvent mouseEvent = (MouseEvent) event;
-
-                if (!dispatchingMode && mouseEvent.getID() == MouseEvent.MOUSE_CLICKED) {
-                    // Process an original mouse event
-                    dispatchingMode = true;
-                    try {
-                        redispatchMouseEvent(mouseEvent, layer);
-                    } finally {
-                        dispatchingMode = false;
-                    }
-                }
-            } else {
-                super.eventDispatched(event, layer);
-            }
-            layer.repaint();
-        }
-
-        public void redispatchMouseEvent(MouseEvent event, JLayer<? extends JPanel> layer) {
-            // Get point relative to the whole canvas.
-            Point realPoint = event.getPoint();
-            realPoint = SwingUtilities.convertPoint(event.getComponent(), realPoint, layer);
-            realPoint = Vector.scaled(new Vector(realPoint), getZoomLevel()).toPoint();
-            
-            Component view = layer.getView();
-            Point viewPoint = SwingUtilities.convertPoint(layer, realPoint, view);
-            Component target = SwingUtilities.getDeepestComponentAt(layer, realPoint.x, realPoint.y);
-            
-            // Get point relative to the target.
-            Point targetPoint = SwingUtilities.convertPoint(layer, realPoint, target);
-            
-            if (event.getID() == MouseEvent.MOUSE_CLICKED) {
-                System.out.println(getZoomLevel() + " (" + targetPoint.x + ", " + targetPoint.y + ") " + event.getComponent().getClass());
-            }
-
-            MouseEvent processedEvent = new MouseEvent(target, event.getID(),
-                    event.getWhen(),
-                    event.getModifiers(), targetPoint.x, targetPoint.y,
-                    event.getClickCount(),
-                    event.isPopupTrigger(), event.getButton());
-            target.dispatchEvent(processedEvent);
         }
     }
 }
