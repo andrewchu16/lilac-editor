@@ -1,9 +1,9 @@
 package diagram;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -21,7 +21,7 @@ import javax.swing.event.DocumentListener;
 
 import utility.Vector;
 
-public class Diagram extends JPanel {
+abstract public class Diagram extends JPanel {
     public static final int MIN_WIDTH = 150;
     public static final int MIN_HEIGHT = 70;
     private DiagramTitle title;
@@ -34,7 +34,6 @@ public class Diagram extends JPanel {
         this.setBackground(Color.WHITE);
 
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.weightx = 1;
         constraints.weighty = 1;
@@ -72,7 +71,7 @@ public class Diagram extends JPanel {
         int newWidth = (int) Math.max(this.title.getPreferredWidth(), MIN_WIDTH);
         int newHeight = (int) Math.max(this.title.getPreferredHeight(), MIN_HEIGHT);
 
-        this.setSize(newWidth, newHeight);
+        this.setSize(newWidth + 2, newHeight + 2);
         this.revalidate();
     }
 
@@ -128,7 +127,7 @@ public class Diagram extends JPanel {
         String lastText;
 
         public DiagramBody() {
-            super(1, 1);
+            super();
             this.lastText = "";
             this.addFocusListener(STOP_EDIT_ON_UNFOCUS);
             this.addMouseListener(EDIT_ON_DOUBLECLICK);
