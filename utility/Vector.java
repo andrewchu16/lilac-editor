@@ -70,6 +70,11 @@ public class Vector {
         return differenceVector;
     }
 
+    public static double getManhattanDistance(Vector vector1, Vector vector2) {
+        Vector differenceVector = Vector.difference(vector1, vector2);
+        return Math.abs(differenceVector.getX()) + Math.abs(differenceVector.getY());
+    }
+
     public Point toPoint() {
         return new Point((int) this.x, (int) this.y);
     }

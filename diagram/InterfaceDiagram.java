@@ -84,6 +84,10 @@ public class InterfaceDiagram extends Diagram {
 
     @Override
     public void resizeDiagramToFit() {
+        if (this.getNumBodies() != 1) {
+            return;
+        }
+        
         DiagramTitle diagramTitle = this.getDiagramTitle();
 
         int newWidth = Math.max(diagramTitle.getPreferredWidth(), MIN_WIDTH);

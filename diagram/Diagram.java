@@ -10,6 +10,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -24,6 +25,7 @@ abstract public class Diagram extends JPanel {
     public static final int MIN_WIDTH = 150;
     public static final int MIN_HEIGHT = 70;
     private DiagramTitle title;
+    private ArrayList<Arrow> arrows;
     
     public Diagram(String titleText, Point pos) {
         super();
@@ -31,6 +33,7 @@ abstract public class Diagram extends JPanel {
         this.setBounds(pos.x, pos.y, MIN_WIDTH, MIN_HEIGHT);
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         this.setBackground(Color.WHITE);
+        this.arrows = new ArrayList<Arrow>();
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
@@ -102,6 +105,29 @@ abstract public class Diagram extends JPanel {
     @Override
     public boolean isFocusOwner() {
         return super.isFocusOwner() || this.title.isFocusOwner();
+    }
+
+    public Point[] getArrowMountPoints() {
+        Point[] mountPoints = {
+            new Point(this.getX() + this.getWidth() / 2, this.getY()), // Top
+            new Point(this.getX() + this.getWidth(), this.getY() + this.getHeight() / 2), // Right
+            new Point(this.getX() + this.getWidth() / 2, this.getY() + this.getHeight()), // Bottom
+            new Point(this.getX(), this.getY() + this.getHeight() / 2) // Left
+        };
+
+        return mountPoints;
+    }
+
+    public void addArrow(Arrow arrow) {
+        this.arrows.add(arrow);
+    }
+
+    public void removeArrow(Arrow arrow) {
+        this.arrows.remove(arrow);
+    }
+
+    public boolean hasArrow(Arrow arrow) {
+        return this.arrows.contains(arrow);
     }
 
     public class DiagramTitle extends JTextField {

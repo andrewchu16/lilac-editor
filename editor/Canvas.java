@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
+import diagram.Arrow;
 import diagram.ClassDiagram;
 import diagram.Diagram;
 import diagram.InterfaceDiagram;
@@ -37,6 +38,7 @@ public class Canvas extends JScrollPane {
     private EditorActionHistory actionHistory;
     private EditorAction lastSavedAction;
     private Diagram selectedDiagram;
+    private Arrow selectedArrow;
     private Tool tool;
 
     private int zoomLevelIndex;
@@ -56,6 +58,7 @@ public class Canvas extends JScrollPane {
         this.actionHistory = new EditorActionHistory();
         this.lastSavedAction = null;
         this.selectedDiagram = null;
+        this.selectedArrow = null;
         this.tool = tool;
         this.zoomLevelIndex = Arrays.binarySearch(ZOOM_LEVELS, 1.0);
         
@@ -163,8 +166,24 @@ public class Canvas extends JScrollPane {
         this.updateCanvas();
     }
 
-    public void moveDiagram(Vector changeInPos) {
+    public void addArrow(Arrow arrow) {
+        Diagram startDiagram = arrow.getStartDiagram();
+        Diagram endDiagram = arrow.getEndDiagram();
 
+        if (startDiagram.hasArrow(arrow) || endDiagram.hasArrow(arrow)) {
+            // An arrow between the two diagrams already exists.
+            return;
+        }
+
+        this.innerPanel.add(arrow);
+        startDiagram.addArrow(arrow);
+        endDiagram.addArrow(arrow);
+        this.updateCanvas();
+    }
+
+    public void removeArrow(Arrow arrow) {
+        this.innerPanel.remove(arrow);
+        this.updateCanvas();
     }
 
     public void export() {
@@ -239,8 +258,18 @@ public class Canvas extends JScrollPane {
                 Point mouseEndPos = SwingUtilities.convertPoint(diagramChild, event.getPoint(), innerPanel);
                 Vector changeInPos = Vector.difference(new Vector(mouseEndPos), new Vector(this.mouseStartPos));
                 selectedDiagram.shiftPos(changeInPos);
-                EditorAction action = new MoveDiagram(selectedDiagram, changeInPos);
+                EditorAction action = new MoveDiagramAction(selectedDiagram, changeInPos);
                 actionHistory.add(action);
+            } else if (tool.equals(Const.INHERITS_TOOL_TYPE)) {
+                Point realPoint = SwingUtilities.convertPoint(event.getComponent(), event.getPoint(), innerPanel);
+                Component endDiagram = innerPanel.getComponentAt(realPoint);
+                if (endDiagram instanceof Diagram) {
+                    Arrow arrow = new Arrow(selectedDiagram, (Diagram) endDiagram);
+                    addArrow(arrow);
+                    System.out.println(arrow);
+                    EditorAction action = new CreateArrowAction(arrow);
+                    actionHistory.add(action);
+                }
             }
         }
     };
@@ -270,6 +299,46 @@ public class Canvas extends JScrollPane {
         
     };
 
+    public class DeleteAction implements EditorAction {
+        private Arrow arrow;
+        private Diagram diagram;
+
+        public DeleteAction(Arrow arrow, Diagram diagram) {
+            this.arrow = arrow;
+            this.diagram = diagram;
+        }
+
+        @Override
+        public void redo() {
+            removeArrow(arrow);
+            removeDiagram(diagram);
+        }
+
+        @Override
+        public void undo() {
+            addDiagram(diagram);
+            addArrow(arrow);
+        }
+    }
+
+    public class CreateArrowAction implements EditorAction {
+        private Arrow arrow;
+
+        public CreateArrowAction(Arrow arrow) {
+            this.arrow = arrow;
+        }
+
+        @Override
+        public void redo() {
+            addArrow(this.arrow);
+        }
+
+        @Override
+        public void undo() {
+            removeArrow(this.arrow);
+        }
+    }
+
     public class CreateDiagramAction implements EditorAction {
         private Diagram diagram;
 
@@ -288,11 +357,11 @@ public class Canvas extends JScrollPane {
         }
     }
 
-    public class MoveDiagram implements EditorAction {
+    public class MoveDiagramAction implements EditorAction {
         private Diagram diagram;
         private Vector changeInPos;
 
-        public MoveDiagram(Diagram diagram, Vector changeInPos) {
+        public MoveDiagramAction(Diagram diagram, Vector changeInPos) {
             this.changeInPos = changeInPos;
             this.diagram = diagram;
         }
@@ -307,35 +376,6 @@ public class Canvas extends JScrollPane {
             this.diagram.shiftPos(Vector.scaled(this.changeInPos, -1));
         }
     }
-
-    public class MoveDiagramsAction implements EditorAction {
-        private ArrayList<Diagram> diagrams;
-        private ArrayList<Vector> changeInPosList;
-
-        public MoveDiagramsAction(ArrayList<Diagram> diagrams, ArrayList<Vector> changeInPosList) {
-            this.diagrams = diagrams;
-            this.changeInPosList = changeInPosList;
-        }
-
-        @Override
-        public void redo() {
-            int length = Math.min(diagrams.size(), changeInPosList.size());
-            for (int i = 0; i < length; i++) {
-                Vector changeInPos = changeInPosList.get(i);
-                this.diagrams.get(i).shiftPos(changeInPos);
-            }
-        }
-
-        @Override
-        public void undo() {
-            int length = Math.min(diagrams.size(), changeInPosList.size());
-            for (int i = 0; i < length; i++) {
-                Vector changeInPos = Vector.scaled(changeInPosList.get(i), -1);
-                this.diagrams.get(i).shiftPos(changeInPos);
-            }
-        }
-    }
-
     public class EditDiagramTextAction implements EditorAction {
         private Diagram diagram;
         private String oldTitleText;
