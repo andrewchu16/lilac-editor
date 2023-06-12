@@ -87,20 +87,6 @@ public class LilacEditor {
 
         this.menuBar.addSeparator(Const.FILE_MENU_TEXT);
 
-        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.SAVE_FILE_COMMAND, Const.SAVE_FILE_KEYSTROKE, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                save();
-            }
-        });
-
-        this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.SAVE_AS_COMMAND, Const.SAVE_AS_KEYSTROKE, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                System.out.println(Const.SAVE_AS_COMMAND);
-            }
-        });
-
         this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.EXPORT_COMMAND, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -221,10 +207,11 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton(Const.SAVE_ICON_FILE_NAME, Const.SAVE_FILE_COMMAND, new ActionListener() {
+            new UtilityButton(Const.SAVE_ICON_FILE_NAME, Const.EXPORT_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
-                    save();
+                    Canvas canvas = getSelectedCanvas();
+                    canvas.export();
                 }
             })
         );
@@ -355,13 +342,6 @@ public class LilacEditor {
         Canvas canvas = this.getSelectedCanvas();
         canvas.redo();
         return canvas.canRedo();
-    }
-
-    public void save() {
-        Canvas canvas = this.getSelectedCanvas();
-        if (!canvas.isSaved()) {
-            canvas.save();
-        }
     }
 
     public void duplicateSelected() {

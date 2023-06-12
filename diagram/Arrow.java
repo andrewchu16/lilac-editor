@@ -1,14 +1,12 @@
 package diagram;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -24,7 +22,7 @@ public class Arrow extends JComponent {
     private Stroke stroke;
     private int endStyle;
 
-    public static final int DEFAULT_LINE_THICKNESS = 3;
+    public static final int DEFAULT_LINE_THICKNESS = 2;
     public static final Stroke SOLID = new BasicStroke(DEFAULT_LINE_THICKNESS);
     public static final Stroke DASHED = new BasicStroke(DEFAULT_LINE_THICKNESS, 
         BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{6}, 0);
@@ -77,38 +75,31 @@ public class Arrow extends JComponent {
         Point[] arrowPoints = new Point[0];
         switch (this.endStyle) {
             case TRIANGLE_END:
+            case ARROW_END:
                 arrowPoints = new Point[3];
                 arrowPoints[0] = new Point(-12, -8);
                 arrowPoints[1] = new Point(0, 0);
                 arrowPoints[2] = new Point(-12, 8);
                 break;
             case FILL_DIAMOND_END:
+            case LINE_DIAMOND_END:
                 arrowPoints = new Point[4];
                 arrowPoints[0] = new Point(-12, -8);
                 arrowPoints[1] = new Point(0, 0);
                 arrowPoints[2] = new Point(-12, 8);
-                arrowPoints[3] = new Point(-12, 0);
-            case LINE_DIAMOND_END:
-                break;
-            case ARROW_END:
-            default:
-                arrowPoints = new Point[3];
-                arrowPoints[0] = new Point(-12, -8);
-                arrowPoints[1] = new Point(0, 0);
-                arrowPoints[2] = new Point(-12, 8);
+                arrowPoints[3] = new Point(-24, 0);
                 break;
         }
 
         // Rotate the end arrow.
         Point beforeEndPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(this.points.size() - 2), this);
         Point endPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(this.points.size() - 1), this);
-        double offs = -Math.PI;
         double angle = Math.atan2(endPoint.y - beforeEndPoint.y, endPoint.x - beforeEndPoint.x);
         
         for (int i = 0; i < arrowPoints.length; i++) {
-            double length = Math.hypot(arrowPoints[i].x, arrowPoints[i].y) + 90;
-            arrowPoints[i].x = (int) (length * Math.cos(angle - offs));
-            arrowPoints[i].y = (int) (length * Math.sin(angle - offs));
+            Point tempPoint = new Point(arrowPoints[i]);
+            arrowPoints[i].x = (int) (tempPoint.x * Math.cos(angle) - tempPoint.y * Math.sin(angle));
+            arrowPoints[i].y = (int) (tempPoint.y * Math.cos(angle) - tempPoint.x * Math.sin(angle));
         }
 
         // Draw the end arrow.
@@ -214,22 +205,23 @@ public class Arrow extends JComponent {
     }
 
     private void calculateBounds() {
-        this.pos = (Point) this.points.get(0).clone();
-        Point corner = (Point) this.pos.clone();
+        this.pos = new Point(this.points.get(0).x - 50, this.points.get(0).y - 50);
+        Point corner = new Point(this.points.get(0).x + 50, this.points.get(0).y + 50);
 
         for (int i = 1; i < this.points.size(); i++) {
             Point curPoint = this.points.get(i);
-            this.pos.x = Math.min(this.pos.x, curPoint.x);
-            this.pos.y = Math.min(this.pos.y, curPoint.y);
-            corner.x = Math.max(corner.x, curPoint.x);
-            corner.y = Math.max(corner.y, curPoint.y);
+            this.pos.x = Math.min(this.pos.x, curPoint.x - 50);
+            this.pos.y = Math.min(this.pos.y, curPoint.y - 50);
+            corner.x = Math.max(corner.x + 50, curPoint.x);
+            corner.y = Math.max(corner.y + 50, curPoint.y);
         }
 
-        this.size.setSize(corner.x - this.pos.x, corner.y - this.pos.y);
+        this.size.setSize(corner.x - this.pos.x + 50, corner.y - this.pos.y + 50);
         this.setSize(this.size);
         this.setPreferredSize(this.size);
         this.setBounds(this.pos.x, this.pos.y, (int) this.size.getWidth(), (int) this.size.getHeight());
     }
+
 
     private static int getDistance(Point point1, Point point2) {
         return (int) Vector.getManhattanDistance(new Vector(point1), new Vector(point2));
