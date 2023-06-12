@@ -24,10 +24,10 @@ public class Arrow extends JComponent {
     private Stroke stroke;
     private int endStyle;
 
-    public static final int DEFAULT_LINE_THICKNESS = 2;
+    public static final int DEFAULT_LINE_THICKNESS = 3;
     public static final Stroke SOLID = new BasicStroke(DEFAULT_LINE_THICKNESS);
     public static final Stroke DASHED = new BasicStroke(DEFAULT_LINE_THICKNESS, 
-        BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{7}, 0);
+        BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{6}, 0);
 
     public static final int ARROW_END = 1;
     public static final int TRIANGLE_END = 2;
@@ -131,22 +131,24 @@ public class Arrow extends JComponent {
 
     @Override
     public boolean contains(int x, int y) {
+        final int THRESHOLD = 40;
+
         for (int i = 1; i < this.points.size(); i++) {
-            Point startPoint = this.points.get(i - 1);
-            Point endPoint = this.points.get(i);
+            Point startPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(i - 1), this);
+            Point endPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(i), this);
 
             boolean withinX = false;
             boolean withinY = false;
             if (startPoint.x == endPoint.x) {
                 // Vertical line segment.
-                withinX = Math.abs(x - startPoint.x) <= DEFAULT_LINE_THICKNESS;
-                withinY = (startPoint.y <= y && y <= endPoint.y) ||
-                        (endPoint.y <= y && y <= startPoint.y);
+                withinX = Math.abs(x - startPoint.x) <= DEFAULT_LINE_THICKNESS + THRESHOLD;
+                withinY = (startPoint.y - THRESHOLD <= y && y <= endPoint.y + THRESHOLD) ||
+                        (endPoint.y - THRESHOLD <= y && y <= startPoint.y + THRESHOLD);
             } else {
                 // Horizontal line segment.
-                withinX = (startPoint.x <= x && x <= endPoint.x) ||
-                        (endPoint.x <= x && x <= startPoint.x);
-                withinY = Math.abs(y - startPoint.y) <= DEFAULT_LINE_THICKNESS;
+                withinX = (startPoint.x - THRESHOLD <= x && x <= endPoint.x + THRESHOLD) ||
+                        (endPoint.x - THRESHOLD <= x && x <= startPoint.x + THRESHOLD);
+                withinY = Math.abs(y - startPoint.y) <= DEFAULT_LINE_THICKNESS + THRESHOLD;
             }
 
             if (withinX && withinY) {

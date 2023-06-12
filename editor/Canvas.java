@@ -180,6 +180,7 @@ public class Canvas extends JScrollPane {
             return;
         }
 
+        arrow.addMouseListener(ARROW_MOUSE_LISTENER);
         this.innerPanel.add(arrow);
         startDiagram.addArrow(arrow);
         endDiagram.addArrow(arrow);
@@ -233,14 +234,14 @@ public class Canvas extends JScrollPane {
             requestFocus();
             selectedDiagram = null;
             selectedArrow = null;
-            if (tool.getType().equals(Const.CLASS_TOOL_TYPE)) {
+            if (tool.equals(Const.CLASS_TOOL_TYPE)) {
                 Point pos = event.getPoint();
                 selectedDiagram = new ClassDiagram("New Class", pos);
                 addDiagram(selectedDiagram);
 
                 CreateDiagramAction action = new CreateDiagramAction(selectedDiagram);
                 actionHistory.add(action);
-            } else if (tool.getType().equals(Const.INTERFACE_TOOL_TYPE)) {
+            } else if (tool.equals(Const.INTERFACE_TOOL_TYPE)) {
                 Point pos = event.getPoint();
                 selectedDiagram = new InterfaceDiagram("New Interface", pos);
                 addDiagram(selectedDiagram);
@@ -311,7 +312,8 @@ public class Canvas extends JScrollPane {
     public final MouseListener ARROW_MOUSE_LISTENER = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent event) {
-
+            Arrow arrow = (Arrow) event.getComponent();
+            selectedArrow = arrow;
         }
     };
 
