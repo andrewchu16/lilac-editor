@@ -79,27 +79,27 @@ public class ZoomUI extends LayerUI<JComponent> {
 
             switch (originalEvent.getID()) {
             case MouseEvent.MOUSE_PRESSED:
-                newEvent = transformMouseEvent(originalEvent, realTargetComponent, realPoint, originalEvent.getID());
+                newEvent = scaleMouseEvent(originalEvent, realTargetComponent, realPoint, originalEvent.getID());
                 if (newEvent != null) {
                     lastPressedTargetComponent = newEvent.getComponent();
                 }
                 break;
             case MouseEvent.MOUSE_RELEASED:
-                newEvent = transformMouseEvent(originalEvent, lastPressedTargetComponent, realPoint, originalEvent.getID());
+                newEvent = scaleMouseEvent(originalEvent, lastPressedTargetComponent, realPoint, originalEvent.getID());
                 lastPressedTargetComponent = null;
                 break;
             case MouseEvent.MOUSE_CLICKED:
-                newEvent = transformMouseEvent(originalEvent, realTargetComponent, realPoint, originalEvent.getID());
+                newEvent = scaleMouseEvent(originalEvent, realTargetComponent, realPoint, originalEvent.getID());
                 lastPressedTargetComponent = null;
                 break;
             case MouseEvent.MOUSE_MOVED:
-                newEvent = transformMouseEvent(originalEvent, realTargetComponent, realPoint, originalEvent.getID());
+                newEvent = scaleMouseEvent(originalEvent, realTargetComponent, realPoint, originalEvent.getID());
             case MouseEvent.MOUSE_ENTERED:
             case MouseEvent.MOUSE_EXITED:
                 generateEnterExitEvents(originalEvent, realTargetComponent, realPoint);
                 break;
             case MouseEvent.MOUSE_DRAGGED:
-                newEvent = transformMouseEvent(originalEvent, lastPressedTargetComponent, realPoint, originalEvent.getID());
+                newEvent = scaleMouseEvent(originalEvent, lastPressedTargetComponent, realPoint, originalEvent.getID());
                 generateEnterExitEvents(originalEvent, realTargetComponent, realPoint);
                 break;
             }
@@ -126,7 +126,7 @@ public class ZoomUI extends LayerUI<JComponent> {
         return point;
     }
 
-    private MouseEvent transformMouseEvent(MouseEvent mouseEvent, Component targetComponent, Point targetPoint, int id) {
+    private MouseEvent scaleMouseEvent(MouseEvent mouseEvent, Component targetComponent, Point targetPoint, int id) {
         if (targetComponent == null) {
             return null;
         }
@@ -194,10 +194,10 @@ public class ZoomUI extends LayerUI<JComponent> {
     private void generateEnterExitEvents( MouseEvent originalEvent, Component newTargetComponent, Point realPoint) {
         if (lastEnteredTargetComponent != newTargetComponent) {
             dispatchMouseEvent(
-                    transformMouseEvent(originalEvent, lastEnteredTargetComponent, realPoint, MouseEvent.MOUSE_EXITED));
+                    scaleMouseEvent(originalEvent, lastEnteredTargetComponent, realPoint, MouseEvent.MOUSE_EXITED));
             lastEnteredTargetComponent = newTargetComponent;
             dispatchMouseEvent(
-                    transformMouseEvent(originalEvent, lastEnteredTargetComponent, realPoint, MouseEvent.MOUSE_ENTERED));
+                    scaleMouseEvent(originalEvent, lastEnteredTargetComponent, realPoint, MouseEvent.MOUSE_ENTERED));
         }
     }
 }
