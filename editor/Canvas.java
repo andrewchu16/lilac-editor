@@ -69,6 +69,7 @@ public class Canvas extends JScrollPane {
         this.innerPanel = new JPanel();
         this.innerPanel.setPreferredSize(DEFAULT_CANVAS_SIZE);
         this.innerPanel.setLayout(null);
+        this.innerPanel.setBackground(new Color(243, 243, 243));
         this.layer = new JLayer<JComponent>(this.innerPanel, this.layerUI);
 
         this.viewport = new JViewport();
