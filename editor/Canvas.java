@@ -3,16 +3,20 @@ package editor;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLayer;
@@ -110,7 +114,6 @@ public class Canvas extends JScrollPane {
 
     public void save() {
         this.lastSavedAction = this.actionHistory.getLastPerformedAction();
-        this.export();
     }
 
     public boolean isSaved() {
@@ -188,7 +191,16 @@ public class Canvas extends JScrollPane {
     }
 
     public void export() {
+        BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.createGraphics();
+        this.paint(graphics);
 
+        File outputFile = new File(this.getFileName() + ".jpg");
+        try {
+            ImageIO.write(image, "jpg", outputFile);
+        } catch (IOException exception) {
+            System.err.println("Error exporting image.");
+        }
     }
 
     public double getZoomLevel() {
@@ -209,7 +221,7 @@ public class Canvas extends JScrollPane {
                 actionHistory.add(action);
             } else if (tool.getType().equals(Const.INTERFACE_TOOL_TYPE)) {
                 Point pos = event.getPoint();
-                selectedDiagram = new InterfaceDiagram("New Inerface", pos);
+                selectedDiagram = new InterfaceDiagram("New Interface", pos);
                 addDiagram(selectedDiagram);
 
                 CreateDiagramAction action = new CreateDiagramAction(selectedDiagram);
@@ -253,21 +265,39 @@ public class Canvas extends JScrollPane {
         @Override
         public void mouseReleased(MouseEvent event) {
             Component diagramChild = event.getComponent();
-            Diagram diagram = (Diagram) diagramChild.getParent();
+            Point mouseEndPos = SwingUtilities.convertPoint(diagramChild, event.getPoint(), innerPanel);
+            Component endDiagram = innerPanel.getComponentAt(mouseEndPos);
 
             if (tool.equals(Const.SELECT_TOOL_TYPE)) {
-                Point mouseEndPos = SwingUtilities.convertPoint(diagramChild, event.getPoint(), innerPanel);
                 Vector changeInPos = Vector.difference(new Vector(mouseEndPos), new Vector(this.mouseStartPos));
                 selectedDiagram.shiftPos(changeInPos);
                 EditorAction action = new MoveDiagramAction(selectedDiagram, changeInPos);
                 actionHistory.add(action);
             } else if (tool.equals(Const.INHERITS_TOOL_TYPE)) {
-                Point realPoint = SwingUtilities.convertPoint(event.getComponent(), event.getPoint(), innerPanel);
-                Component endDiagram = innerPanel.getComponentAt(realPoint);
                 if (endDiagram instanceof Diagram) {
-                    Arrow arrow = new Arrow(selectedDiagram, (Diagram) endDiagram);
+                    Arrow arrow = new Arrow(selectedDiagram, (Diagram) endDiagram, Arrow.SOLID, Arrow.TRIANGLE_END);
                     addArrow(arrow);
-                    System.out.println(arrow);
+                    EditorAction action = new CreateArrowAction(arrow);
+                    actionHistory.add(action);
+                }
+            } else if (tool.equals(Const.IMPLEMENTS_TOOL_TYPE)) {
+                if (endDiagram instanceof Diagram) {
+                    Arrow arrow = new Arrow(selectedDiagram, (Diagram) endDiagram, Arrow.DASHED, Arrow.ARROW_END);
+                    addArrow(arrow);
+                    EditorAction action = new CreateArrowAction(arrow);
+                    actionHistory.add(action);
+                }
+            } else if (tool.equals(Const.AGGREGATE_TOOL_TYPE)) {
+                if (endDiagram instanceof Diagram) {
+                    Arrow arrow = new Arrow(selectedDiagram, (Diagram) endDiagram, Arrow.SOLID, Arrow.LINE_DIAMOND_END);
+                    addArrow(arrow);
+                    EditorAction action = new CreateArrowAction(arrow);
+                    actionHistory.add(action);
+                }
+            } else if (tool.equals(Const.COMPOSED_TOOL_TYPE)) {
+                if (endDiagram instanceof Diagram) {
+                    Arrow arrow = new Arrow(selectedDiagram, (Diagram) endDiagram, Arrow.SOLID, Arrow.FILL_DIAMOND_END);
+                    addArrow(arrow);
                     EditorAction action = new CreateArrowAction(arrow);
                     actionHistory.add(action);
                 }

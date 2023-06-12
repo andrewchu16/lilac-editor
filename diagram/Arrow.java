@@ -21,18 +21,34 @@ public class Arrow extends JComponent {
     private ArrayList<Point> points;
     private Point pos;
     private Dimension size;
+    private Stroke stroke;
+    private int endStyle;
 
     public static final int DEFAULT_LINE_THICKNESS = 2;
+    public static final Stroke SOLID = new BasicStroke(DEFAULT_LINE_THICKNESS);
+    public static final Stroke DASHED = new BasicStroke(DEFAULT_LINE_THICKNESS, 
+        BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{7}, 0);
 
-    public Arrow(Diagram startDiagram, Diagram endDiagram) {
+    public static final int ARROW_END = 1;
+    public static final int TRIANGLE_END = 2;
+    public static final int FILL_DIAMOND_END = 3;
+    public static final int LINE_DIAMOND_END = 4;
+
+    public Arrow(Diagram startDiagram, Diagram endDiagram, Stroke stroke, int endStyle) {
+        super();
         this.startDiagram = startDiagram;
         this.endDiagram = endDiagram;
+        this.stroke = stroke;
+        this.endStyle = endStyle;
         this.points = new ArrayList<Point>();
         this.pos = new Point();
         this.size = new Dimension();
         this.setLayout(null);
-
         this.calculatePoints();
+    }
+
+    public Arrow(Diagram startDiagram, Diagram endDiagram) {
+        this(startDiagram, endDiagram, SOLID, ARROW_END);
     }
 
     @Override
@@ -42,17 +58,75 @@ public class Arrow extends JComponent {
             return;
         }
 
+        // Draw the line.
         Graphics2D g2 = (Graphics2D) graphics.create();
-        g2.setStroke(new BasicStroke(DEFAULT_LINE_THICKNESS));
-
+        g2.setStroke(this.stroke);
         for (int i = 1; i < this.points.size(); i++) {
             Point startPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(i - 1), this);
             Point endPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(i), this);
-
             g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
         }
 
+        this.drawEndArrow(g2);
+
         g2.dispose();
+    }
+
+    public void drawEndArrow(Graphics2D g2) {
+        // Get the points of the end arrow.
+        Point[] arrowPoints = new Point[0];
+        switch (this.endStyle) {
+            case TRIANGLE_END:
+                arrowPoints = new Point[3];
+                arrowPoints[0] = new Point(-12, -8);
+                arrowPoints[1] = new Point(0, 0);
+                arrowPoints[2] = new Point(-12, 8);
+                break;
+            case FILL_DIAMOND_END:
+                arrowPoints = new Point[4];
+                arrowPoints[0] = new Point(-12, -8);
+                arrowPoints[1] = new Point(0, 0);
+                arrowPoints[2] = new Point(-12, 8);
+                arrowPoints[3] = new Point(-12, 0);
+            case LINE_DIAMOND_END:
+                break;
+            case ARROW_END:
+            default:
+                arrowPoints = new Point[3];
+                arrowPoints[0] = new Point(-12, -8);
+                arrowPoints[1] = new Point(0, 0);
+                arrowPoints[2] = new Point(-12, 8);
+                break;
+        }
+
+        // Rotate the end arrow.
+        Point beforeEndPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(this.points.size() - 2), this);
+        Point endPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(this.points.size() - 1), this);
+        double offs = -Math.PI;
+        double angle = Math.atan2(endPoint.y - beforeEndPoint.y, endPoint.x - beforeEndPoint.x);
+        
+        for (int i = 0; i < arrowPoints.length; i++) {
+            double length = Math.hypot(arrowPoints[i].x, arrowPoints[i].y) + 90;
+            arrowPoints[i].x = (int) (length * Math.cos(angle - offs));
+            arrowPoints[i].y = (int) (length * Math.sin(angle - offs));
+        }
+
+        // Draw the end arrow.
+        g2.setStroke(SOLID);
+        int[] xPoints = new int[arrowPoints.length];
+        int[] yPoints = new int[arrowPoints.length];
+        for (int i = 0; i < arrowPoints.length; i++) {
+            xPoints[i] = endPoint.x + arrowPoints[i].x;
+            yPoints[i] = endPoint.y + arrowPoints[i].y;
+        }
+
+        if (this.endStyle == ARROW_END) {
+            g2.drawPolyline(xPoints, yPoints, arrowPoints.length);
+        } else if (this.endStyle == TRIANGLE_END || this.endStyle == LINE_DIAMOND_END) {
+            g2.drawPolygon(xPoints, yPoints, arrowPoints.length);
+        } else {
+            g2.fillPolygon(xPoints, yPoints, arrowPoints.length);
+        }
     }
 
     @Override
@@ -84,7 +158,7 @@ public class Arrow extends JComponent {
     }
 
     public void calculatePoints() {
-        // Determine the starting and ending point of the arrow.
+        // Determine the starting and ending point of the arrow that gives the smallest distance.
         Point[] startMountPoints = this.startDiagram.getArrowMountPoints();
         Point[] endMountPoints = this.endDiagram.getArrowMountPoints();
 
@@ -106,6 +180,7 @@ public class Arrow extends JComponent {
         Point startMountPoint = startMountPoints[bestStartPointIndex];
         Point endMountPoint = endMountPoints[bestEndPointIndex];
 
+        this.points.clear();
         this.points.add(startMountPoint);
         // Create intermediate points.
         if (bestStartPointIndex % 2 == bestEndPointIndex % 2) {
@@ -137,7 +212,6 @@ public class Arrow extends JComponent {
     }
 
     private void calculateBounds() {
-        // Update position and size.
         this.pos = (Point) this.points.get(0).clone();
         Point corner = (Point) this.pos.clone();
 

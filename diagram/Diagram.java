@@ -51,10 +51,16 @@ abstract public class Diagram extends JPanel {
 
     public void setPos(Vector pos) {
         this.setLocation(pos.toPoint());
+        for (Arrow arrow: this.arrows) {
+            arrow.calculatePoints();
+        }
     }
 
     public void shiftPos(Vector changeInPos) {
         this.setLocation(this.getX() + (int) changeInPos.getX(), this.getY() + (int) changeInPos.getY());
+        for (Arrow arrow: this.arrows) {
+            arrow.calculatePoints();
+        }
     }
 
     public void setTitle(String titleText) {
@@ -75,6 +81,10 @@ abstract public class Diagram extends JPanel {
 
         this.setSize(newWidth + 2, newHeight + 2);
         this.revalidate();
+
+        for (Arrow arrow: this.arrows) {
+            arrow.calculatePoints();
+        }
     }
 
     public DiagramTitle getDiagramTitle() {

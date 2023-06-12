@@ -104,7 +104,8 @@ public class LilacEditor {
         this.menuBar.addMenuItem(Const.FILE_MENU_TEXT, Const.EXPORT_COMMAND, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println(Const.EXPORT_COMMAND);
+                Canvas canvas = getSelectedCanvas();
+                canvas.export();
             }
         });
 
