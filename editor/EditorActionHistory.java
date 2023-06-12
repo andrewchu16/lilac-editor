@@ -3,6 +3,11 @@ import java.util.Stack;
 import java.util.Deque;
 import java.util.LinkedList;
 
+/**
+ * This class stores the actions committed on the editor's canvas. It tracks the history of actions and the current action after undoing or redoing actions.
+ * @author Andrew Chu
+ * @version June 2023
+ */
 public class EditorActionHistory {
     public static final int HISTORY_LENGTH = 10;
 
@@ -10,12 +15,19 @@ public class EditorActionHistory {
     private Stack<EditorAction> future;
     private EditorAction lastPerformedAction;
 
+    /**
+     * This constructs an empty editor action history.
+     */
     public EditorActionHistory() {
         this.past = new LinkedList<EditorAction>();
         this.future = new Stack<EditorAction>();
         this.lastPerformedAction = null;
     }
 
+    /**
+     * This adds an action to the editor history.
+     * @param action The action to add.
+     */
     public void add(EditorAction action) {
         this.future.clear();
         this.past.addLast(action);
@@ -28,6 +40,10 @@ public class EditorActionHistory {
         this.lastPerformedAction = action;
     }
 
+    /**
+     * This undoes an action if available.
+     * @return The action just undone, null if no action.
+     */
     public EditorAction undo() {
         if (!this.canUndo()) { 
             return null;
@@ -46,6 +62,10 @@ public class EditorActionHistory {
         return curAction;
     }
 
+    /**
+     * This redoes an action if available.
+     * @return The action just redone, null if no action.
+     */
     public EditorAction redo() {
         if (!this.canRedo()) {
             return null;

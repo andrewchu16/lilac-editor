@@ -20,6 +20,11 @@ import window.ToolBar;
 import window.ToolButton;
 import window.UtilityButton;
 
+/**
+ * This program runs a UML diagram editor.
+ * @author Andrew Chu
+ * @version June 2023
+ */
 public class LilacEditor {
     private JFrame frame;
     private Settings settings;
@@ -28,6 +33,9 @@ public class LilacEditor {
     private TabManager tabManager;
     private Tool tool;
 
+    /**
+     * This constructs the editor and the window.
+     */
     public LilacEditor() {
         this.tool = new Tool(Const.SELECT_TOOL_TYPE);
         this.setupWindow();
@@ -37,6 +45,9 @@ public class LilacEditor {
         this.loadSettings();
     }
 
+    /**
+     * This sets the window settings.
+     */
     private void setupWindow() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -58,6 +69,9 @@ public class LilacEditor {
         this.frame.setLayout(new BorderLayout());
     }
 
+    /**
+     * This sets up the top menu bar.
+     */
     private void setupMenuBar() {
         this.menuBar = new EditorMenuBar();
         this.frame.setJMenuBar(menuBar);
@@ -128,13 +142,6 @@ public class LilacEditor {
             }
         });
 
-        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.DUPLICATE_COMMAND, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                duplicateSelected();
-            }
-        });
-
         this.menuBar.addSeparator(Const.EDIT_MENU_TEXT);
 
         this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.COPY_COMMAND, Const.COPY_KEYSTROKE, new ActionListener() {
@@ -184,6 +191,9 @@ public class LilacEditor {
         this.menuBar.setMnemonic(Const.VIEW_MENU_TEXT, Const.VIEW_MENU_MNEMONIC);
     }
 
+    /**
+     * This sets up the side toolbar for interacting with the canvas.
+     */
     private void setupToolBar() {
         this.toolBar = new ToolBar("Tool Selector", this.tool);
         this.frame.add(this.toolBar, BorderLayout.WEST);
@@ -207,25 +217,6 @@ public class LilacEditor {
         );
 
         this.toolBar.addUtilityButton(
-            new UtilityButton(Const.SAVE_ICON_FILE_NAME, Const.EXPORT_COMMAND, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    Canvas canvas = getSelectedCanvas();
-                    canvas.export();
-                }
-            })
-        );
-
-        this.toolBar.addUtilityButton(
-            new UtilityButton(Const.DUPLICATE_ICON_FILE_NAME, Const.DUPLICATE_COMMAND, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    duplicateSelected();
-                }
-            })
-        );
-
-        this.toolBar.addUtilityButton(
             new UtilityButton(Const.ZOOM_IN_ICON_FILE_NAME, Const.ZOOM_IN_COMMAND, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
@@ -239,6 +230,16 @@ public class LilacEditor {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     zoomOut();
+                }
+            })
+        );
+        
+        this.toolBar.addUtilityButton(
+            new UtilityButton(Const.EXPORT_ICON_FILE_NAME, Const.EXPORT_COMMAND, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    Canvas canvas = getSelectedCanvas();
+                    canvas.export();
                 }
             })
         );
@@ -274,6 +275,9 @@ public class LilacEditor {
         this.toolBar.setTool(Const.SELECT_TOOL_TYPE);
     }
 
+    /**
+     * This sets up the canvas tab manager.
+     */
     private void setupTabManager() {
         this.tabManager = new TabManager();
 
@@ -281,6 +285,9 @@ public class LilacEditor {
         this.frame.add(this.tabManager, BorderLayout.CENTER);
     }
 
+    /**
+     * This loads the previous session's window settings.
+     */
     private void loadSettings() {
         this.settings = new Settings(Const.SETTINGS_FILE_NAME);
 
@@ -332,36 +339,53 @@ public class LilacEditor {
         }
     }
 
+    /**
+     * This undoes the last action on the currently visible canvas.
+     * @return True if there is still an action that can be undone afterwards, false otherwise.
+     */
     public boolean undo() {
         Canvas canvas = this.getSelectedCanvas();
         canvas.undo();
         return canvas.canUndo();
     }
 
+    /**
+     * This redoes the last action on the currently visible canvas.
+     * @return True if there is still an aciton that can be redone aftewards, false otherwise.
+     */
     public boolean redo() {
         Canvas canvas = this.getSelectedCanvas();
         canvas.redo();
         return canvas.canRedo();
     }
 
-    public void duplicateSelected() {
-        System.out.println(Const.DUPLICATE_COMMAND);
-    }
-
+    /**
+     * This zooms into the current canvas if possible.
+     */
     public void zoomIn() {
         Canvas canvas = this.getSelectedCanvas();
         canvas.zoomIn();
     }
 
+    /**
+     * This zooms out of the current canvas if possible.
+     */
     public void zoomOut() {
         Canvas canvas = this.getSelectedCanvas();
         canvas.zoomOut();
     }
 
+    /**
+     * This gets the currently visible canvas.
+     * @return The canvas.
+     */
     public Canvas getSelectedCanvas() {
         return this.tabManager.getSelectedCanvas();
     }
 
+    /**
+     * This starts the editor GUI.
+     */
     public void run() {
         this.frame.setVisible(true);
         this.frame.requestFocusInWindow();

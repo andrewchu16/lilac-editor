@@ -3,6 +3,11 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 
+/**
+ * This class stores constant values used for names and titles.
+ * @author Andrew Chu
+ * @version June 2023
+ */
 public final class Const {
     public static final String SETTINGS_FILE_NAME = "settings.txt";
 
@@ -42,8 +47,6 @@ public final class Const {
     public static final String NEW_FILE_COMMAND = "New File";
     public static final String OPEN_FILE_COMMAND = "Open";
     public static final String CLOSE_FILE_COMMAND = "Close";
-    public static final String SAVE_FILE_COMMAND = "Save";
-    public static final String SAVE_AS_COMMAND = "Save As";
     public static final String EXPORT_COMMAND = "Export";
     public static final String EXIT_COMMAND = "Exit";
 
@@ -72,7 +75,7 @@ public final class Const {
     // Utility Button Icons
     public static final String UNDO_ICON_FILE_NAME = "./assets/undo 64x64.png";
     public static final String REDO_ICON_FILE_NAME = "./assets/redo 64x64.png";
-    public static final String SAVE_ICON_FILE_NAME = "./assets/save 64x64.png";
+    public static final String EXPORT_ICON_FILE_NAME = "./assets/save 64x64.png";
     public static final String DUPLICATE_ICON_FILE_NAME = "./assets/duplicate 64x64.png";
     public static final String ZOOM_IN_ICON_FILE_NAME = "./assets/zoom-in 64x64.png";
     public static final String ZOOM_OUT_ICON_FILE_NAME = "./assets/zoom-out 64x64.png";

@@ -13,6 +13,11 @@ import javax.swing.SwingUtilities;
 
 import utility.Vector;
 
+/**
+ * This represents an arrow between diagrams.
+ * @author Andrew Chu
+ * @version June 2023
+ */
 public class Arrow extends JComponent {
     private Diagram startDiagram;
     private Diagram endDiagram;
@@ -32,6 +37,13 @@ public class Arrow extends JComponent {
     public static final int FILL_DIAMOND_END = 3;
     public static final int LINE_DIAMOND_END = 4;
 
+    /**
+     * This constructs a new arrow.
+     * @param startDiagram The diagram at the start end.
+     * @param endDiagram The diagram at the end.
+     * @param stroke The line stroke to use for the arrow.
+     * @param endStyle The end style for this arrow.
+     */
     public Arrow(Diagram startDiagram, Diagram endDiagram, Stroke stroke, int endStyle) {
         super();
         this.startDiagram = startDiagram;
@@ -45,6 +57,11 @@ public class Arrow extends JComponent {
         this.calculatePoints();
     }
 
+    /**
+     * This constructs a newar row.
+     * @param startDiagram The diagram at the start end.
+     * @param endDiagram The diagram at the end.
+     */
     public Arrow(Diagram startDiagram, Diagram endDiagram) {
         this(startDiagram, endDiagram, SOLID, ARROW_END);
     }
@@ -70,6 +87,10 @@ public class Arrow extends JComponent {
         g2.dispose();
     }
 
+    /**
+     * This draws the end of the arrow.
+     * @param g2 The graphics to draw on.
+     */
     public void drawEndArrow(Graphics2D g2) {
         // Get the points of the end arrow.
         Point[] arrowPoints = new Point[0];
@@ -150,6 +171,9 @@ public class Arrow extends JComponent {
         return false;
     }
 
+    /**
+     * This calculates the points to connect the two diagrams together.
+     */
     public void calculatePoints() {
         // Determine the starting and ending point of the arrow that gives the smallest distance.
         Point[] startMountPoints = this.startDiagram.getArrowMountPoints();
@@ -204,6 +228,9 @@ public class Arrow extends JComponent {
         this.calculateBounds();
     }
 
+    /**
+     * This calculates the position and size of this arrow.
+     */
     private void calculateBounds() {
         this.pos = new Point(this.points.get(0).x - 50, this.points.get(0).y - 50);
         Point corner = new Point(this.points.get(0).x + 50, this.points.get(0).y + 50);
@@ -222,15 +249,28 @@ public class Arrow extends JComponent {
         this.setBounds(this.pos.x, this.pos.y, (int) this.size.getWidth(), (int) this.size.getHeight());
     }
 
-
+    /**
+     * This is a utility function that gets the distance between two points.
+     * @param point1 The first point.
+     * @param point2 The second point.
+     * @return The Manhattan distance between them.
+     */
     private static int getDistance(Point point1, Point point2) {
         return (int) Vector.getManhattanDistance(new Vector(point1), new Vector(point2));
     }
 
+    /**
+     * This gets the start diagram.
+     * @return The start diagram.
+     */
     public Diagram getStartDiagram() {
         return this.startDiagram;
     }
 
+    /**
+     * This gets the end diagram.
+     * @return The end diagram.
+     */
     public Diagram getEndDiagram() {
         return this.endDiagram;
     }
