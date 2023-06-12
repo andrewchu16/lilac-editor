@@ -71,6 +71,11 @@ public class ClassDiagram extends InterfaceDiagram {
     }
 
     @Override
+    public boolean textChanged() {
+        return super.textChanged() || !this.getPropertiesText().equals(this.getLastPropertiesText());
+    }
+
+    @Override
     public void resizeDiagramToFit() {
         if (this.getNumBodies() != 2) {
             return;

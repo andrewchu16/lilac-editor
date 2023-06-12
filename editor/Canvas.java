@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.awt.event.FocusEvent;
@@ -49,7 +50,7 @@ public class Canvas extends JScrollPane {
 
     private static final double[] ZOOM_LEVELS = { 0.5, 0.75, 0.9, 1.0, 1.15, 1.5, 2.0 };
     private static final String DEFAULT_CANVAS_NAME = "./untitled.canvas";
-    private static final Dimension DEFAULT_CANVAS_SIZE = new Dimension(1920, 1080);
+    private static final Dimension DEFAULT_CANVAS_SIZE = new Dimension(2100, 2100);
 
     public Canvas(Tool tool) {
         this(DEFAULT_CANVAS_NAME, tool);
@@ -186,6 +187,11 @@ public class Canvas extends JScrollPane {
     }
 
     public void removeArrow(Arrow arrow) {
+        Diagram startDiagram = arrow.getStartDiagram();
+        Diagram endDiagram = arrow.getEndDiagram();
+
+        startDiagram.removeArrow(arrow);
+        endDiagram.removeArrow(arrow);
         this.innerPanel.remove(arrow);
         this.updateCanvas();
     }
@@ -203,6 +209,20 @@ public class Canvas extends JScrollPane {
         }
     }
 
+    public void removeSelected() {
+        EditorAction action = new DeleteAction(this.selectedArrow, this.selectedDiagram);
+        this.actionHistory.add(action);
+
+        if (this.selectedDiagram != null) {
+            this.removeDiagram(this.selectedDiagram);
+        }
+
+        if (this.selectedArrow != null) {
+            this.removeArrow(this.selectedArrow);
+        }
+
+    }
+
     public double getZoomLevel() {
         return ZOOM_LEVELS[this.zoomLevelIndex];
     }
@@ -212,6 +232,7 @@ public class Canvas extends JScrollPane {
         public void mouseClicked(MouseEvent event) {
             requestFocus();
             selectedDiagram = null;
+            selectedArrow = null;
             if (tool.getType().equals(Const.CLASS_TOOL_TYPE)) {
                 Point pos = event.getPoint();
                 selectedDiagram = new ClassDiagram("New Class", pos);
@@ -228,25 +249,6 @@ public class Canvas extends JScrollPane {
                 actionHistory.add(action);
             }
         }
-
-        @Override
-        public void mousePressed(MouseEvent event) {
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent event) {
-        }
-    };
-
-    public final MouseMotionAdapter DIAGRAM_MOUSE_MOTION_LISTENER = new MouseMotionAdapter() {
-        @Override
-        public void mouseDragged(MouseEvent event) {
-            
-        }
-
-        @Override
-        public void mouseMoved(MouseEvent event) {
-        }
     };
 
     public final MouseAdapter DIAGRAM_MOUSE_LISTENER = new MouseAdapter() {
@@ -256,6 +258,7 @@ public class Canvas extends JScrollPane {
         public void mousePressed(MouseEvent event) {
             Component diagramChild = event.getComponent();
             selectedDiagram = (Diagram) diagramChild.getParent();
+            selectedArrow = null;
             diagramChild.requestFocus();
             if (tool.equals(Const.SELECT_TOOL_TYPE)) {
                 this.mouseStartPos = SwingUtilities.convertPoint(diagramChild, event.getPoint(), innerPanel);
@@ -282,7 +285,7 @@ public class Canvas extends JScrollPane {
                 }
             } else if (tool.equals(Const.IMPLEMENTS_TOOL_TYPE)) {
                 if (endDiagram instanceof Diagram) {
-                    Arrow arrow = new Arrow(selectedDiagram, (Diagram) endDiagram, Arrow.DASHED, Arrow.ARROW_END);
+                    Arrow arrow = new Arrow(selectedDiagram, (Diagram) endDiagram, Arrow.DASHED, Arrow.TRIANGLE_END);
                     addArrow(arrow);
                     EditorAction action = new CreateArrowAction(arrow);
                     actionHistory.add(action);
@@ -305,11 +308,19 @@ public class Canvas extends JScrollPane {
         }
     };
 
+    public final MouseListener ARROW_MOUSE_LISTENER = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent event) {
+
+        }
+    };
+
     public final FocusListener DIAGRAM_FOCUS_LISTENER = new FocusListener() {
         @Override
         public void focusGained(FocusEvent event) {
             Component diagramChild = event.getComponent();
             selectedDiagram = (Diagram) diagramChild.getParent();
+            selectedArrow = null;
             selectedDiagram.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
         }
 
@@ -324,8 +335,10 @@ public class Canvas extends JScrollPane {
             }
 
             diagram.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-            EditorAction action = new EditDiagramTextAction(diagram);
-            actionHistory.add(action);
+            if (diagram.textChanged()) {
+                EditorAction action = new EditDiagramTextAction(diagram);
+                actionHistory.add(action);
+            }
         }
         
     };
@@ -341,14 +354,24 @@ public class Canvas extends JScrollPane {
 
         @Override
         public void redo() {
-            removeArrow(arrow);
-            removeDiagram(diagram);
+            if (this.arrow != null) {
+                removeArrow(this.arrow);
+            }
+
+            if (this.diagram != null) {
+                removeDiagram(this.diagram);
+            }
         }
 
         @Override
         public void undo() {
-            addDiagram(diagram);
-            addArrow(arrow);
+            if (this.arrow != null) {
+                addArrow(this.arrow);
+            }
+
+            if (this.diagram != null) {
+                addDiagram(this.diagram);
+            }
         }
     }
 

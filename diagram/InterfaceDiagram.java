@@ -83,6 +83,11 @@ public class InterfaceDiagram extends Diagram {
     }
 
     @Override
+    public boolean textChanged() {
+        return super.textChanged() || !this.getMethodText().equals(this.getLastMethodText());
+    }
+
+    @Override
     public void resizeDiagramToFit() {
         if (this.getNumBodies() != 1) {
             return;

@@ -137,7 +137,8 @@ public class LilacEditor {
         this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.DELETE_COMMAND, Const.DELETE_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                System.out.println(Const.DELETE_COMMAND);
+                Canvas canvas = getSelectedCanvas();
+                canvas.removeSelected();
             }
         });
 

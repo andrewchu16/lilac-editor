@@ -140,6 +140,10 @@ abstract public class Diagram extends JPanel {
         return this.arrows.contains(arrow);
     }
 
+    public boolean textChanged() {
+        return !this.getTitle().equals(this.getLastTitle());
+    }
+
     public class DiagramTitle extends JTextField {
         String lastTitleText;
 
