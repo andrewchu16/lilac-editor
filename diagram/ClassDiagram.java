@@ -6,7 +6,17 @@ import java.awt.Point;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseListener;
 
+/**
+ * This represents a diagram component that stores a class.
+ * @author Andrew Chu
+ * @version June 2023
+ */
 public class ClassDiagram extends InterfaceDiagram {
+    /**
+     * This constructs a new Class Diagram component.
+     * @param titleText The title of this diagram.
+     * @param pos The position of this diagram.
+     */
     public ClassDiagram(String titleText, Point pos) {
         super(titleText, pos);
         
@@ -21,18 +31,34 @@ public class ClassDiagram extends InterfaceDiagram {
         this.resizeDiagramToFit();
     }
 
+    /**
+     * This sets the properties text of this diagram.
+     * @param propertiesText The new properties text.
+     */
     public void setPropertiesText(String propertiesText) {
         this.getPropertiesBody().setText(propertiesText);
     }
 
+    /**
+     * This gets the properties text of this diagram.
+     * @return The properties text.
+     */
     public String getPropertiesText() {
         return this.getPropertiesBody().getText();
     }
 
+    /**
+     * This gets the last properties text set.
+     * @return The last properties text.
+     */
     public String getLastPropertiesText() {
         return this.getPropertiesBody().getLastText();
     }
 
+    /**
+     * This gets the DiagramBody component for the properties.
+     * @return The properties DiagramBody component.
+     */
     public DiagramBody getPropertiesBody() {
         return this.getBody(0);
     }

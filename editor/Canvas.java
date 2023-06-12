@@ -12,9 +12,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -32,6 +30,11 @@ import diagram.Diagram;
 import diagram.InterfaceDiagram;
 import utility.Vector;
 
+/**
+ * This represents an editable canvas for putting UML diagrams on.
+ * @author Andrew Chu
+ * @version June 2023
+ */
 public class Canvas extends JScrollPane {
     private File file;
     private String title;
@@ -41,7 +44,6 @@ public class Canvas extends JScrollPane {
     private ZoomUI layerUI;
 
     private EditorActionHistory actionHistory;
-    private EditorAction lastSavedAction;
     private Diagram selectedDiagram;
     private Arrow selectedArrow;
     private Tool tool;
@@ -52,16 +54,24 @@ public class Canvas extends JScrollPane {
     private static final String DEFAULT_CANVAS_NAME = "./untitled.canvas";
     private static final Dimension DEFAULT_CANVAS_SIZE = new Dimension(2100, 2100);
 
+    /**
+     * This constructs a new empty canvas.
+     * @param tool The reference to the tool object.
+     */
     public Canvas(Tool tool) {
         this(DEFAULT_CANVAS_NAME, tool);
     }
 
+    /**
+     * This constructs a new empty canvas with the specified file name.
+     * @param filePath The path to the file to save to.
+     * @param tool The reference to the tool object.
+     */
     public Canvas(String filePath, Tool tool) {
         super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.file = new File(filePath);
         this.title = this.getFileName();
         this.actionHistory = new EditorActionHistory();
-        this.lastSavedAction = null;
         this.selectedDiagram = null;
         this.selectedArrow = null;
         this.tool = tool;
@@ -85,52 +95,91 @@ public class Canvas extends JScrollPane {
         this.innerPanel.addMouseListener(CANVAS_MOUSE_LISTENER);
     }
 
+    /**
+     * This gets the absolute file path to save the file to.
+     * @return The absolute file path.
+     */
     public String getFilePath() {
         return this.file.getAbsolutePath();
     }
 
+    /**
+     * This gets the file name of this canvas.
+     * @return The file name.
+     */
     public String getFileName() {
         return this.file.getName();
     }
 
+    /**
+     * This gets the title displayed for this canvas.
+     * @return The canvas title.
+     */
     public String getTitle() {
         return this.title;
     }
 
+    /**
+     * This sets the title displayed for this canvas.
+     * @param title The new title.
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setFile(File file) {
-        this.file = file;
-    }
-
+    /**
+     * This checks if an action can be undone.
+     * @return True if an action can be undone, false otherwise.
+     */
     public boolean canUndo() {
         return this.actionHistory.canUndo();
     }
 
+    /**
+     * This checks if an action can be redone.
+     * @return True if an action can be redone, false otherwise.
+     */
     public boolean canRedo() {
         return this.actionHistory.canRedo();
     }
 
+    /**
+     * This undoes an action.
+     * @return True if there is another action left to undo after this one, false if there is not.
+     */
     public boolean undo() {
         this.actionHistory.undo();
         return this.actionHistory.canUndo();
     }
 
+    /**
+     * This redoes an action. 
+     * @return True if there is another action left to redo after thiso ne, false if there is not.
+     */
     public boolean redo() {
         this.actionHistory.redo();
         return this.actionHistory.canRedo();
     }
 
+    /**
+     * This checks if the canvas can still zoom in.
+     * @return True if it can, false if it cannot.
+     */
     public boolean canZoomIn() {
         return this.zoomLevelIndex < ZOOM_LEVELS.length - 1;
     }
 
+    /**
+     * This checks if the canvas can still zoom out.
+     * @return True if it can, false if it cannot.
+     */
     public boolean canZoomOut() {
         return this.zoomLevelIndex > 0;
     }
 
+    /**
+     * This zooms in on the canvas.
+     */
     public void zoomIn() {
         if (this.canZoomIn()) {
             this.zoomLevelIndex++;
@@ -138,6 +187,9 @@ public class Canvas extends JScrollPane {
         }
     }
 
+    /**
+     * This zooms out on the canvas.
+     */
     public void zoomOut() {
         if (this.canZoomOut()) {
             this.zoomLevelIndex--;
@@ -145,12 +197,19 @@ public class Canvas extends JScrollPane {
         }
     }
 
+    /**
+     * This updates the rendering panel of this canvas.
+     */
     private void updateCanvas() {
         this.layerUI.setZoom(this.getZoomLevel());
         this.revalidate();
         this.repaint();
     }
 
+    /**
+     * This adds a diagram to this canvas.
+     * @param diagram The diagram to add.
+     */
     public void addDiagram(Diagram diagram) {
         diagram.addMouseListener(DIAGRAM_MOUSE_LISTENER);
         diagram.addFocusListener(DIAGRAM_FOCUS_LISTENER);
@@ -158,11 +217,19 @@ public class Canvas extends JScrollPane {
         this.updateCanvas();
     }
 
+    /**
+     * This removes a diagram from this canvas.
+     * @param diagram The diagram to remove.
+     */
     public void removeDiagram(Diagram diagram) {
         this.innerPanel.remove(diagram);
         this.updateCanvas();
     }
 
+    /**
+     * This adds an arrow to this canvas.
+     * @param arrow The arrow to add.
+     */
     public void addArrow(Arrow arrow) {
         Diagram startDiagram = arrow.getStartDiagram();
         Diagram endDiagram = arrow.getEndDiagram();
@@ -179,6 +246,10 @@ public class Canvas extends JScrollPane {
         this.updateCanvas();
     }
 
+    /**
+     * This removes an arrow from this canvas.
+     * @param arrow The arrow to remove.
+     */
     public void removeArrow(Arrow arrow) {
         Diagram startDiagram = arrow.getStartDiagram();
         Diagram endDiagram = arrow.getEndDiagram();
@@ -189,12 +260,15 @@ public class Canvas extends JScrollPane {
         this.updateCanvas();
     }
 
+    /**
+     * This exports this canvas to a JPEG image at the file path specified with an additional .jpg extension.
+     */
     public void export() {
         BufferedImage image = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics graphics = image.createGraphics();
         this.paint(graphics);
 
-        File outputFile = new File(this.getFileName() + ".jpg");
+        File outputFile = new File(this.getFilePath() + ".jpg");
         try {
             ImageIO.write(image, "jpg", outputFile);
         } catch (IOException exception) {
@@ -202,6 +276,9 @@ public class Canvas extends JScrollPane {
         }
     }
 
+    /**
+     * This removes the selected diagram and/or arrow from this canvas.
+     */
     public void removeSelected() {
         EditorAction action = new DeleteAction(this.selectedArrow, this.selectedDiagram);
         this.actionHistory.add(action);
@@ -213,14 +290,24 @@ public class Canvas extends JScrollPane {
         if (this.selectedArrow != null) {
             this.removeArrow(this.selectedArrow);
         }
-
     }
 
+    /**
+     * This gets the current mangification of the zoom.
+     * @return The zoom level.
+     */
     public double getZoomLevel() {
         return ZOOM_LEVELS[this.zoomLevelIndex];
     }
 
+    /**
+     * This represents the object that handles canvas-specific mouse events.
+     */
     public final MouseAdapter CANVAS_MOUSE_LISTENER = new MouseAdapter() {
+        /**
+         * This handles the createion of new classes and interfaces.
+         * @param event The mouse event.
+         */
         @Override
         public void mouseClicked(MouseEvent event) {
             requestFocus();
@@ -244,9 +331,15 @@ public class Canvas extends JScrollPane {
         }
     };
 
+    /**
+     * This represents the object that handles diagram-specific mouse events.
+     */
     public final MouseAdapter DIAGRAM_MOUSE_LISTENER = new MouseAdapter() {
         private Point mouseStartPos = new Point();
 
+        /**
+         * This handles selecting the current diagram with the mouse.
+         */
         @Override
         public void mousePressed(MouseEvent event) {
             Component diagramChild = event.getComponent();
@@ -258,6 +351,10 @@ public class Canvas extends JScrollPane {
             }
         }
 
+        /**
+         * This handles the moving of the selected diagram and drawing arrows.
+         * @param event The mouse event.
+         */
         @Override
         public void mouseReleased(MouseEvent event) {
             Component diagramChild = event.getComponent();
@@ -301,7 +398,14 @@ public class Canvas extends JScrollPane {
         }
     };
 
+    /**
+     * This handles arrow-specific mouse events.
+     */
     public final MouseListener ARROW_MOUSE_LISTENER = new MouseAdapter() {
+        /**
+         * This handles selecting the current arrow.
+         * @param event The mouse event.
+         */
         @Override
         public void mouseClicked(MouseEvent event) {
             Arrow arrow = (Arrow) event.getComponent();
@@ -309,7 +413,14 @@ public class Canvas extends JScrollPane {
         }
     };
 
+    /**
+     * This object handles diagram-specific focus events.
+     */
     public final FocusListener DIAGRAM_FOCUS_LISTENER = new FocusListener() {
+        /**
+         * This handles selecting the current diagram and highlighting it.
+         * @param event The focus event.
+         */
         @Override
         public void focusGained(FocusEvent event) {
             Component diagramChild = event.getComponent();
@@ -318,6 +429,10 @@ public class Canvas extends JScrollPane {
             selectedDiagram.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
         }
 
+        /**
+         * This handles recording edit text actions so they can be added to the undo history.
+         * @param event The focus event.
+         */
         @Override
         public void focusLost(FocusEvent event) {
             Component diagramChild = event.getComponent();
@@ -337,10 +452,20 @@ public class Canvas extends JScrollPane {
         
     };
 
+    /**
+     * This class represents the action of deleting an arrow and/or diagram.
+     * @author Andrew Chu
+     * @version June 2023
+     */
     public class DeleteAction implements EditorAction {
         private Arrow arrow;
         private Diagram diagram;
 
+        /**
+         * This constructs a new delete action.
+         * @param arrow The arrow deleted or null.
+         * @param diagram The diagram deleted or null.
+         */
         public DeleteAction(Arrow arrow, Diagram diagram) {
             this.arrow = arrow;
             this.diagram = diagram;
@@ -369,9 +494,18 @@ public class Canvas extends JScrollPane {
         }
     }
 
+    /**
+     * This class represents the action of creating an arrow.
+     * @author Andrew Chu
+     * @version June 2023
+     */
     public class CreateArrowAction implements EditorAction {
         private Arrow arrow;
 
+        /**
+         * This creates this actin.
+         * @param arrow The arrow created.
+         */
         public CreateArrowAction(Arrow arrow) {
             this.arrow = arrow;
         }
@@ -387,9 +521,18 @@ public class Canvas extends JScrollPane {
         }
     }
 
+    /**
+     * This class represents the action of creating a diagram.
+     * @author Andrew Chu
+     * @version June 2023
+     */
     public class CreateDiagramAction implements EditorAction {
         private Diagram diagram;
 
+        /**
+         * This constructs a new action for creating a diagram.
+         * @param diagram The diagram created.
+         */
         public CreateDiagramAction(Diagram diagram) {
             this.diagram = diagram;
         }
@@ -405,10 +548,20 @@ public class Canvas extends JScrollPane {
         }
     }
 
+    /**
+     * This class represents the action of moving a diagram.
+     * @author Andrew Chu
+     * @version June 2023
+     */
     public class MoveDiagramAction implements EditorAction {
         private Diagram diagram;
         private Vector changeInPos;
 
+        /**
+         * This construct the action.
+         * @param diagram The diagram moved.
+         * @param changeInPos The change in the diagram's position.
+         */
         public MoveDiagramAction(Diagram diagram, Vector changeInPos) {
             this.changeInPos = changeInPos;
             this.diagram = diagram;
@@ -424,6 +577,12 @@ public class Canvas extends JScrollPane {
             this.diagram.shiftPos(Vector.scaled(this.changeInPos, -1));
         }
     }
+
+    /**
+     * This class represents the action of editing the text of a diagram.
+     * @author Andrew Chu
+     * @version June 2023
+     */
     public class EditDiagramTextAction implements EditorAction {
         private Diagram diagram;
         private String oldTitleText;
@@ -433,6 +592,10 @@ public class Canvas extends JScrollPane {
         private String oldPropertiesText;
         private String newPropertiesText;
 
+        /**
+         * This constructs a new edit text action.
+         * @param diagram The diagram with edited text.
+         */
         public EditDiagramTextAction(Diagram diagram) {
             this.diagram = diagram;
             this.oldTitleText = diagram.getLastTitle();

@@ -7,9 +7,19 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
+/**
+ * This represents a diagram component that stores an interface.
+ * @author Andrew Chu
+ * @version June 2023
+ */
 public class InterfaceDiagram extends Diagram {
     private ArrayList<DiagramBody> bodies;
 
+    /**
+     * This constructs a new InterfaceDiagram component.
+     * @param titleText The title of this diagram.
+     * @param pos The position of this diagram.
+     */
     public InterfaceDiagram(String titleText, Point pos) {
         super(titleText, pos);
         
@@ -25,31 +35,61 @@ public class InterfaceDiagram extends Diagram {
         this.resizeDiagramToFit();
     }
 
+    /**
+     * This sets the method text displayed by this diagram.
+     * @param methodText The method text.
+     */
     public void setMethodText(String methodText) {
         this.getMethodBody().setText(methodText);
     }
 
+    /**
+     * This gets the method text displayed and stored by this diagram.
+     * @return The method text.
+     */
     public String getMethodText() {
         return this.getMethodBody().getText();
     }
 
+    /**
+     * This gets the last set method text stored by this diagram before the current one.
+     * @return
+     */
     public String getLastMethodText() {
         return this.getMethodBody().getLastText();
     }
 
+    /**
+     * This adds a diagram body to the bottom of this diagram.
+     * @param diagramBody The diagram body component to add
+     * @param constraints The constraints on this component.
+     */
     public void add(DiagramBody diagramBody, Object constraints) {
         super.add(diagramBody, constraints);
         this.bodies.add(diagramBody);
     }
 
+    /**
+     * This gets the method body diagram component.
+     * @return The method body diagram component.
+     */
     public DiagramBody getMethodBody() {
         return this.getBody(0);
     }
 
+    /**
+     * This gets the nth diagram body component in this diagram.
+     * @param index The index of the diagram body to get.
+     * @return The diagram body component.
+     */
     public DiagramBody getBody(int index) {
         return this.bodies.get(index);
     }
 
+    /**
+     * This gets the number of diagram body components in this diagram.
+     * @return The number of diagram bodies.
+     */
     public int getNumBodies() {
         return this.bodies.size();
     }
