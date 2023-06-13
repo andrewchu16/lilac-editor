@@ -54,8 +54,6 @@ public final class Const {
     public static final String REDO_COMMAND = "Redo";
     public static final String DELETE_COMMAND = "Delete";
     public static final String DUPLICATE_COMMAND = "Duplicate";
-    public static final String COPY_COMMAND = "Copy";
-    public static final String PASTE_COMMAND = "Paste";
 
     public static final String ZOOM_IN_COMMAND = "Zoom In";
     public static final String ZOOM_OUT_COMMAND = "Zoom Out";

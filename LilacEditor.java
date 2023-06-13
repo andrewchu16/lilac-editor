@@ -142,22 +142,6 @@ public class LilacEditor {
             }
         });
 
-        this.menuBar.addSeparator(Const.EDIT_MENU_TEXT);
-
-        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.COPY_COMMAND, Const.COPY_KEYSTROKE, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                System.out.println(Const.COPY_COMMAND);
-            }
-        });
-
-        this.menuBar.addMenuItem(Const.EDIT_MENU_TEXT, Const.PASTE_COMMAND, Const.PASTE_KEYSTROKE, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                System.out.println(Const.PASTE_COMMAND);
-            }
-        });
-
         this.menuBar.addMenuItem(Const.VIEW_MENU_TEXT, Const.ZOOM_IN_COMMAND, Const.ZOOM_IN_KEYSTROKE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
