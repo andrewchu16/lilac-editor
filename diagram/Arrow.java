@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -115,12 +116,12 @@ public class Arrow extends JComponent {
         // Rotate the end arrow.
         Point beforeEndPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(this.points.size() - 2), this);
         Point endPoint = SwingUtilities.convertPoint(this.getParent(), this.points.get(this.points.size() - 1), this);
-        double angle = Math.atan2(endPoint.y - beforeEndPoint.y, endPoint.x - beforeEndPoint.x);
+        double angle = -Math.atan2(endPoint.y - beforeEndPoint.y, endPoint.x - beforeEndPoint.x);
         
         for (int i = 0; i < arrowPoints.length; i++) {
             Point tempPoint = new Point(arrowPoints[i]);
-            arrowPoints[i].x = (int) (tempPoint.x * Math.cos(angle) - tempPoint.y * Math.sin(angle));
-            arrowPoints[i].y = (int) (tempPoint.y * Math.cos(angle) - tempPoint.x * Math.sin(angle));
+            arrowPoints[i].x = (int) Math.round(tempPoint.x * Math.cos(angle) - tempPoint.y * Math.sin(angle));
+            arrowPoints[i].y = (int) Math.round(tempPoint.y * Math.cos(angle) - tempPoint.x * Math.sin(angle));
         }
 
         // Draw the end arrow.
